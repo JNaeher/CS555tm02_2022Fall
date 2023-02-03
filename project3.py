@@ -7,12 +7,14 @@ file = open('project1.ged', 'r')
 lines = file.readlines()
 array = []
 
+# checks to see if an element is in a list
 def exists(elem, list):
     for a in list:
         if(a == elem):
             return True
     return False
 
+# turns a string into a date object
 def date_format(string):
     temp = string.split(" ", 2)
     day = int(temp[0])
@@ -44,9 +46,11 @@ def date_format(string):
         month = 12
     return date(year, month, day)
 
+# returns the age for someone who is alive
 def age_alive(birth):
     return int((date.today() - birth).days / 365)
 
+# returns the age for someone who is dead
 def age_dead(birth, death):
     return int((death - birth).days / 365)
 
@@ -64,6 +68,7 @@ fams = []
 
 count = 0
 
+# helper function for storing information about individuals
 def individual_helper(array, dictionary):
     for x in range(len(array)):
         temp = array[x].split(" ", 2)
@@ -89,6 +94,7 @@ def individual_helper(array, dictionary):
                 dictionary["birthday"] = temp2[2]
     indivs.append(dictionary)
 
+# helper function for adding information about families
 def family_helper(array, family):
     for x in range(len(array)):
         temp = array[x].split(" ", 2)
@@ -113,6 +119,8 @@ def family_helper(array, family):
     fams.append(family)
     return 0
 
+# main loop, goes through all the lines from the gedcom file
+# calls either individual helper or family helper depending on the line
 for x in range(len(array)):
     temp = array[x].split(" ", 2)
     if(len(temp) == 2 or len(temp) == 1):
@@ -125,6 +133,7 @@ for x in range(len(array)):
             family = dict(ID = temp[1], married = None, divorced = None, hid = None, hname = None, wid = None, wname = None, children = [])
             family_helper(array[x+1:], family)
 
+# to make the table look a bit better
 for person in indivs:
     if(person['death'] == None):
         person['alive'] = True
@@ -136,10 +145,11 @@ for person in indivs:
 
 
 
-
+# makes the PrettyTables to print out
 indivTable = PrettyTable(["ID", "Name", "Gender", "Birthday", "Age", "Alive", "Death", "Child", "Spouse"])
 famTable = PrettyTable(["ID", "Married", "Divorced", "Husband ID", "Husband Name", "Wife ID", "Wife Name", "Children"])
 
+# adds each individual to the individuals table
 for person in indivs:
     temp = []
     temp.append(person['ID'])
@@ -153,6 +163,7 @@ for person in indivs:
     temp.append(person['spouse'])
     indivTable.add_row(temp)
 
+# gets the name of husband and wife for each family
 for family in fams:
     husb_id = family['hid']
     wife_id = family['wid']
@@ -162,6 +173,7 @@ for family in fams:
         if(wife_id == person['ID']):
             family['wname'] = person['name']
 
+# adds each family to the family table
 for family in fams:
     temp = []
     temp.append(family['ID'])
@@ -174,6 +186,7 @@ for family in fams:
     temp.append(family['children'])
     famTable.add_row(temp)
 
+#prints the tables
 print("Individuals:")
 print(indivTable)
 
