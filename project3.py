@@ -1,6 +1,8 @@
 from prettytable import PrettyTable
 from datetime import date
 
+#reminder: output into a file
+
 tags = ["INDI", "NAME", "SEX", "BIRT", "DEAT", "FAMC", "FAMS", "FAM", "MARR", "HUSB", "WIFE", "CHIL", "DIV", "DATE", "HEAD", "TRLR", "NOTE"]
 
 file = open('project1.ged', 'r')
