@@ -58,12 +58,31 @@ def age_dead(birth, death):
 for line in lines:
     array.append(line.strip())
 
-# each individual will be saved as
-# [ID, full name, gender, birthday, age, alive, death, child, spouse]
+# each individual will be saved as a dictionary with None values initially:
+# individual = {
+#     ID = None,
+#     name = None,
+#     gender = None,
+#     birthday = None,
+#     age = None,
+#     alive = None,
+#     death = None,
+#     child = None,
+#     spouse = None
+# }
 indivs = []
 
-# each family will be saved as 
-# [ID, married (date), divorced (date), husband ID, husband name, wife id, wide name, list of children]
+# each family will be saved as a dictionary with None values initially
+# individual = {
+#     ID = None,
+#     married = None,
+#     divorced = None,
+#     hid = None,
+#     hname = None,
+#     wid = None,
+#     wname = None,
+#     children = None
+# }
 fams = []
 
 count = 0
