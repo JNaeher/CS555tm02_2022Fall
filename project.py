@@ -60,6 +60,20 @@ def age_dead(birth, death):
 for line in lines:
     array.append(line.strip())
 
+#checks if each tag is valid or not
+for line in array:
+    print("--> " + line)
+    temp = line.split(" ", 2)
+    if(len(temp) < 3): 
+        print("<-- less than three arguments")
+    elif(exists(temp[1], tags)):
+        print("<-- " + temp[0] + "|" + temp[1] + "|Y|" + temp[2])
+    else:
+        if(temp[2] == 'INDI' or temp[2] == 'FAM'):
+            print("<-- " + temp[0] + "|" + temp[1] + "|Y|" + temp[2])
+        else:
+            print("<-- " + temp[0] + "|" + temp[1] + "|N|" + temp[2])
+
 # each individual will be saved as a dictionary with None values initially:
 # individual = {
 #     ID = None,
