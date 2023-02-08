@@ -64,10 +64,14 @@ for line in lines:
 for line in array:
     print("--> " + line)
     temp = line.split(" ", 2)
-    if(len(temp) < 3): 
-        print("<-- less than three arguments")
-    elif(exists(temp[1], tags)):
+    if(exists(temp[1], tags) and len(temp) == 3):
         print("<-- " + temp[0] + "|" + temp[1] + "|Y|" + temp[2])
+    elif(not exists(temp[1], tags) and len(temp) == 3):
+        print("<-- " + temp[0] + "|" + temp[1] + "|N|" + temp[2])
+    elif(exists(temp[1], tags) and len(temp) == 2):
+        print("<-- " + temp[0] + "|" + temp[1] + "|Y|")
+    elif(not exists(temp[1], tags) and len(temp) == 2):
+        print("<-- " + temp[0] + "|" + temp[1] + "|N|")
     else:
         if(temp[2] == 'INDI' or temp[2] == 'FAM'):
             print("<-- " + temp[0] + "|" + temp[1] + "|Y|" + temp[2])
