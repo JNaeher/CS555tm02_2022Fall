@@ -19,6 +19,34 @@ def exists(elem, list):
 # turns a string into a date object
 def date_format(string):
     temp = string.split(" ", 2)
+    if(len(temp) == 2):
+        month = 0
+        if(temp[1] == 'JAN'):
+            month = 1
+        if(temp[1] == 'FEB'):
+            month = 2
+        if(temp[1] == 'MAR'):
+            month = 3
+        if(temp[1] == 'APR'):
+            month = 4
+        if(temp[1] == 'MAY'):
+            month = 5
+        if(temp[1] == 'JUN'):
+            month = 6
+        if(temp[1] == 'JUL'):
+            month = 7
+        if(temp[1] == 'AUG'):
+            month = 8
+        if(temp[1] == 'SEP'):
+            month = 9
+        if(temp[1] == 'OCT'):
+            month = 10
+        if(temp[1] == 'NOV'):
+            month = 11
+        if(temp[1] == 'DEC'):
+            month = 12
+        year = int(temp[1])
+        return date(year, month)
     day = int(temp[0])
     year = int(temp[2])
     month = 0
@@ -64,10 +92,14 @@ for line in lines:
 for line in array:
     print("--> " + line)
     temp = line.split(" ", 2)
-    if(len(temp) < 3): 
-        print("<-- less than three arguments")
-    elif(exists(temp[1], tags)):
+    if(exists(temp[1], tags) and len(temp) == 3):
         print("<-- " + temp[0] + "|" + temp[1] + "|Y|" + temp[2])
+    elif(not exists(temp[1], tags) and len(temp) == 3):
+        print("<-- " + temp[0] + "|" + temp[1] + "|N|" + temp[2])
+    elif(exists(temp[1], tags) and len(temp) == 2):
+        print("<-- " + temp[0] + "|" + temp[1] + "|Y|")
+    elif(not exists(temp[1], tags) and len(temp) == 2):
+        print("<-- " + temp[0] + "|" + temp[1] + "|N|")
     else:
         if(temp[2] == 'INDI' or temp[2] == 'FAM'):
             print("<-- " + temp[0] + "|" + temp[1] + "|Y|" + temp[2])
