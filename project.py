@@ -259,6 +259,8 @@ def organize(filename):
     
     # printIndividuals(indivs, fams)
     # printFamilies(indivs, fams)
+
+    file.close()
     return [indivs, fams]
 
 #user story 22: unique id's
