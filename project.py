@@ -98,35 +98,8 @@ def age_dead(birth, death):
 #         else:
 #             print("<-- " + temp[0] + "|" + temp[1] + "|N|" + temp[2])
 
-# each individual will be saved as a dictionary with None values initially:
-# individual = {
-#     ID = None,
-#     name = None,
-#     gender = None,
-#     birthday = None,
-#     age = None,
-#     alive = None,
-#     death = None,
-#     child = None,
-#     spouse = None
-# }
-indivs = []
-
-# each family will be saved as a dictionary with None values initially
-# individual = {
-#     ID = None,
-#     married = None,
-#     divorced = None,
-#     hid = None,
-#     hname = None,
-#     wid = None,
-#     wname = None,
-#     children = None
-# }
-fams = []
-
 # helper function for storing information about individuals
-def individual_helper(array, dictionary):
+def individual_helper(array, dictionary, indivs):
     for x in range(len(array)):
         temp = array[x].split(" ", 2)
         if(not (x == 0)):
@@ -152,7 +125,7 @@ def individual_helper(array, dictionary):
     indivs.append(dictionary)
 
 # helper function for adding information about families
-def family_helper(array, family):
+def family_helper(array, family, fams):
     for x in range(len(array)):
         temp = array[x].split(" ", 2)
         if(not (x == 0)):
@@ -176,7 +149,7 @@ def family_helper(array, family):
     fams.append(family)
     return 0
 
-def printIndividuals():
+def printIndividuals(indivs, fams):
     indivTable = PrettyTable(["ID", "Name", "Gender", "Birthday", "Age", "Alive", "Death", "Child", "Spouse"])
     for person in indivs:
         temp = []
@@ -194,17 +167,8 @@ def printIndividuals():
     print("Individuals:")
     print(indivTable)
 
-def printFamilies():
+def printFamilies(indivs, fams):
     famTable = PrettyTable(["ID", "Married", "Divorced", "Husband ID", "Husband Name", "Wife ID", "Wife Name", "Children"])
-    # gets the name of husband and wife for each family
-    for family in fams:
-        husb_id = family['hid']
-        wife_id = family['wid']
-        for person in indivs:
-            if(husb_id == person['ID']):
-                family['hname'] = person['name']
-            if(wife_id == person['ID']):
-                family['wname'] = person['name']
 
     # adds each family to the table 
     for family in fams:
@@ -232,6 +196,33 @@ def organize(filename):
     for line in lines:
         array.append(line.strip())
 
+    # each individual will be saved as a dictionary with None values initially:
+    # individual = {
+    #     ID = None,
+    #     name = None,
+    #     gender = None,
+    #     birthday = None,
+    #     age = None,
+    #     alive = None,
+    #     death = None,
+    #     child = None,
+    #     spouse = None
+    # }
+    indivs = []
+
+    # each family will be saved as a dictionary with None values initially
+    # individual = {
+    #     ID = None,
+    #     married = None,
+    #     divorced = None,
+    #     hid = None,
+    #     hname = None,
+    #     wid = None,
+    #     wname = None,
+    #     children = None
+    # }
+    fams = []
+
     # main loop, goes through all the lines from the gedcom file
     # calls either individual helper or family helper depending on the line
     for x in range(len(array)):
@@ -241,10 +232,10 @@ def organize(filename):
         else:
             if(temp[2] == 'INDI'):
                 person = dict(ID = temp[1], name = None, gender = None, birthday = None, age = None, alive = None, death = None, child = None, spouse = None)
-                individual_helper(array[x+1:], person)
+                individual_helper(array[x+1:], person, indivs)
             if(temp[2] == 'FAM'):
                 family = dict(ID = temp[1], married = None, divorced = None, hid = None, hname = None, wid = None, wname = None, children = [])
-                family_helper(array[x+1:], family)
+                family_helper(array[x+1:], family, fams)
 
     # to make the table look a bit better
     for person in indivs:
@@ -255,3 +246,53 @@ def organize(filename):
         else:
             person['alive'] = False
             person['age'] = age_dead(date_format(person['birthday']), date_format(person['death']))
+    
+    # gets the name of husband and wife for each family
+    for family in fams:
+        husb_id = family['hid']
+        wife_id = family['wid']
+        for person in indivs:
+            if(husb_id == person['ID']):
+                family['hname'] = person['name']
+            if(wife_id == person['ID']):
+                family['wname'] = person['name']
+    
+    # printIndividuals(indivs, fams)
+    # printFamilies(indivs, fams)
+
+    file.close()
+    return [indivs, fams]
+
+#user story 22: unique id's
+
+#checking for unique individual ids
+def unique_indiv_id(filename):
+    data = organize(filename)
+    individuals = data[0]
+    ids = []
+    for person in individuals:
+        ids.append(person['ID'])
+    
+    for x in range(len(ids)):
+        if(x == len(ids)-1):
+            return True
+        elif(exists(ids[x], ids[x+1:])):
+            return False
+    
+    return True
+
+def unique_family_id(filename):
+    data = organize(filename)
+    families = data[1]
+    ids = []
+    for fam in families:
+        ids.append(fam['ID'])
+
+    for x in range(len(ids)):
+        if(x == len(ids)-1):
+            return True
+        elif(exists(ids[x], ids[x+1:])):
+            return False
+    
+    return True
+    
