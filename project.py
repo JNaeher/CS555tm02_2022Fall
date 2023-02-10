@@ -5,10 +5,6 @@ from datetime import date
 
 tags = ["INDI", "NAME", "SEX", "BIRT", "DEAT", "FAMC", "FAMS", "FAM", "MARR", "HUSB", "WIFE", "CHIL", "DIV", "DATE", "HEAD", "TRLR", "NOTE"]
 
-file = open('project1.ged', 'r')
-lines = file.readlines()
-array = []
-
 # checks to see if an element is in a list
 def exists(elem, list):
     for a in list:
@@ -84,27 +80,23 @@ def age_alive(birth):
 def age_dead(birth, death):
     return int((death - birth).days / 365)
 
-# gets rid of the end lines in the strings read from the file
-for line in lines:
-    array.append(line.strip())
-
 #checks if each tag is valid or not
-for line in array:
-    print("--> " + line)
-    temp = line.split(" ", 2)
-    if(exists(temp[1], tags) and len(temp) == 3):
-        print("<-- " + temp[0] + "|" + temp[1] + "|Y|" + temp[2])
-    elif(not exists(temp[1], tags) and len(temp) == 3):
-        print("<-- " + temp[0] + "|" + temp[1] + "|N|" + temp[2])
-    elif(exists(temp[1], tags) and len(temp) == 2):
-        print("<-- " + temp[0] + "|" + temp[1] + "|Y|")
-    elif(not exists(temp[1], tags) and len(temp) == 2):
-        print("<-- " + temp[0] + "|" + temp[1] + "|N|")
-    else:
-        if(temp[2] == 'INDI' or temp[2] == 'FAM'):
-            print("<-- " + temp[0] + "|" + temp[1] + "|Y|" + temp[2])
-        else:
-            print("<-- " + temp[0] + "|" + temp[1] + "|N|" + temp[2])
+# for line in array:
+#     print("--> " + line)
+#     temp = line.split(" ", 2)
+#     if(exists(temp[1], tags) and len(temp) == 3):
+#         print("<-- " + temp[0] + "|" + temp[1] + "|Y|" + temp[2])
+#     elif(not exists(temp[1], tags) and len(temp) == 3):
+#         print("<-- " + temp[0] + "|" + temp[1] + "|N|" + temp[2])
+#     elif(exists(temp[1], tags) and len(temp) == 2):
+#         print("<-- " + temp[0] + "|" + temp[1] + "|Y|")
+#     elif(not exists(temp[1], tags) and len(temp) == 2):
+#         print("<-- " + temp[0] + "|" + temp[1] + "|N|")
+#     else:
+#         if(temp[2] == 'INDI' or temp[2] == 'FAM'):
+#             print("<-- " + temp[0] + "|" + temp[1] + "|Y|" + temp[2])
+#         else:
+#             print("<-- " + temp[0] + "|" + temp[1] + "|N|" + temp[2])
 
 # each individual will be saved as a dictionary with None values initially:
 # individual = {
@@ -132,8 +124,6 @@ indivs = []
 #     children = None
 # }
 fams = []
-
-count = 0
 
 # helper function for storing information about individuals
 def individual_helper(array, dictionary):
@@ -186,76 +176,82 @@ def family_helper(array, family):
     fams.append(family)
     return 0
 
-# main loop, goes through all the lines from the gedcom file
-# calls either individual helper or family helper depending on the line
-for x in range(len(array)):
-    temp = array[x].split(" ", 2)
-    if(len(temp) == 2 or len(temp) == 1):
-        continue
-    else:
-        if(temp[2] == 'INDI'):
-            person = dict(ID = temp[1], name = None, gender = None, birthday = None, age = None, alive = None, death = None, child = None, spouse = None)
-            individual_helper(array[x+1:], person)
-        if(temp[2] == 'FAM'):
-            family = dict(ID = temp[1], married = None, divorced = None, hid = None, hname = None, wid = None, wname = None, children = [])
-            family_helper(array[x+1:], family)
-
-# to make the table look a bit better
-for person in indivs:
-    if(person['death'] == None):
-        person['alive'] = True
-        person['death'] = 'N/A'
-        person['age'] = age_alive(date_format(person['birthday']))
-    else:
-        person['alive'] = False
-        person['age'] = age_dead(date_format(person['birthday']), date_format(person['death']))
-
-
-
-# makes the PrettyTables to print out
-indivTable = PrettyTable(["ID", "Name", "Gender", "Birthday", "Age", "Alive", "Death", "Child", "Spouse"])
-famTable = PrettyTable(["ID", "Married", "Divorced", "Husband ID", "Husband Name", "Wife ID", "Wife Name", "Children"])
-
-# adds each individual to the individuals table
-for person in indivs:
-    temp = []
-    temp.append(person['ID'])
-    temp.append(person['name'])
-    temp.append(person['gender'])
-    temp.append(person['birthday'])
-    temp.append(person['age'])
-    temp.append(person['alive'])
-    temp.append(person['death'])
-    temp.append(person['child'])
-    temp.append(person['spouse'])
-    indivTable.add_row(temp)
-
-# gets the name of husband and wife for each family
-for family in fams:
-    husb_id = family['hid']
-    wife_id = family['wid']
+def printIndividuals():
+    indivTable = PrettyTable(["ID", "Name", "Gender", "Birthday", "Age", "Alive", "Death", "Child", "Spouse"])
     for person in indivs:
-        if(husb_id == person['ID']):
-            family['hname'] = person['name']
-        if(wife_id == person['ID']):
-            family['wname'] = person['name']
+        temp = []
+        temp.append(person['ID'])
+        temp.append(person['name'])
+        temp.append(person['gender'])
+        temp.append(person['birthday'])
+        temp.append(person['age'])
+        temp.append(person['alive'])
+        temp.append(person['death'])
+        temp.append(person['child'])
+        temp.append(person['spouse'])
+        indivTable.add_row(temp)
+    #prints the tables
+    print("Individuals:")
+    print(indivTable)
 
-# adds each family to the family table
-for family in fams:
-    temp = []
-    temp.append(family['ID'])
-    temp.append(family['married'])
-    temp.append(family['divorced'])
-    temp.append(family['hid'])
-    temp.append(family['hname'])
-    temp.append(family['wid'])
-    temp.append(family['wname'])
-    temp.append(family['children'])
-    famTable.add_row(temp)
+def printFamilies():
+    famTable = PrettyTable(["ID", "Married", "Divorced", "Husband ID", "Husband Name", "Wife ID", "Wife Name", "Children"])
+    # gets the name of husband and wife for each family
+    for family in fams:
+        husb_id = family['hid']
+        wife_id = family['wid']
+        for person in indivs:
+            if(husb_id == person['ID']):
+                family['hname'] = person['name']
+            if(wife_id == person['ID']):
+                family['wname'] = person['name']
 
-#prints the tables
-print("Individuals:")
-print(indivTable)
+    # adds each family to the table 
+    for family in fams:
+        temp = []
+        temp.append(family['ID'])
+        temp.append(family['married'])
+        temp.append(family['divorced'])
+        temp.append(family['hid'])
+        temp.append(family['hname'])
+        temp.append(family['wid'])
+        temp.append(family['wname'])
+        temp.append(family['children'])
+        famTable.add_row(temp)
 
-print("Families:")
-print(famTable)
+    # prints the table
+    print("Families:")
+    print(famTable)
+
+
+def organize(filename):
+    file = open(filename, 'r')
+    lines = file.readlines()
+    array = []
+    # gets rid of the end lines in the strings read from the file
+    for line in lines:
+        array.append(line.strip())
+
+    # main loop, goes through all the lines from the gedcom file
+    # calls either individual helper or family helper depending on the line
+    for x in range(len(array)):
+        temp = array[x].split(" ", 2)
+        if(len(temp) == 2 or len(temp) == 1):
+            continue
+        else:
+            if(temp[2] == 'INDI'):
+                person = dict(ID = temp[1], name = None, gender = None, birthday = None, age = None, alive = None, death = None, child = None, spouse = None)
+                individual_helper(array[x+1:], person)
+            if(temp[2] == 'FAM'):
+                family = dict(ID = temp[1], married = None, divorced = None, hid = None, hname = None, wid = None, wname = None, children = [])
+                family_helper(array[x+1:], family)
+
+    # to make the table look a bit better
+    for person in indivs:
+        if(person['death'] == None):
+            person['alive'] = True
+            person['death'] = 'N/A'
+            person['age'] = age_alive(date_format(person['birthday']))
+        else:
+            person['alive'] = False
+            person['age'] = age_dead(date_format(person['birthday']), date_format(person['death']))
