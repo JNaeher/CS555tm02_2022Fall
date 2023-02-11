@@ -14,6 +14,8 @@ def exists(elem, list):
 
 # turns a string into a date object
 def date_format(string):
+    if string is None:
+        return None
     temp = string.split(" ", 2)
     if(len(temp) == 2):
         month = 0
@@ -74,10 +76,14 @@ def date_format(string):
 
 # returns the age for someone who is alive
 def age_alive(birth):
+    if birth is None:
+        return None
     return int((date.today() - birth).days / 365)
 
 # returns the age for someone who is dead
 def age_dead(birth, death):
+    if birth is None or death is None:
+        return None
     return int((death - birth).days / 365)
 
 #checks if each tag is valid or not
