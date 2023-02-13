@@ -4,6 +4,7 @@ from datetime import date
 #reminder: output into a file
 
 tags = ["INDI", "NAME", "SEX", "BIRT", "DEAT", "FAMC", "FAMS", "FAM", "MARR", "HUSB", "WIFE", "CHIL", "DIV", "DATE", "HEAD", "TRLR", "NOTE"]
+months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
 
 # checks to see if an element is in a list
 def exists(elem, list):
@@ -11,80 +12,6 @@ def exists(elem, list):
         if(a == elem):
             return True
     return False
-
-# turns a string into a date object
-def date_format(string):
-    if string is None:
-        return None
-    temp = string.split(" ", 2)
-    if(len(temp) == 2):
-        month = 0
-        if(temp[1] == 'JAN'):
-            month = 1
-        if(temp[1] == 'FEB'):
-            month = 2
-        if(temp[1] == 'MAR'):
-            month = 3
-        if(temp[1] == 'APR'):
-            month = 4
-        if(temp[1] == 'MAY'):
-            month = 5
-        if(temp[1] == 'JUN'):
-            month = 6
-        if(temp[1] == 'JUL'):
-            month = 7
-        if(temp[1] == 'AUG'):
-            month = 8
-        if(temp[1] == 'SEP'):
-            month = 9
-        if(temp[1] == 'OCT'):
-            month = 10
-        if(temp[1] == 'NOV'):
-            month = 11
-        if(temp[1] == 'DEC'):
-            month = 12
-        year = int(temp[1])
-        return date(year, month)
-    day = int(temp[0])
-    year = int(temp[2])
-    month = 0
-    if(temp[1] == 'JAN'):
-        month = 1
-    if(temp[1] == 'FEB'):
-        month = 2
-    if(temp[1] == 'MAR'):
-        month = 3
-    if(temp[1] == 'APR'):
-        month = 4
-    if(temp[1] == 'MAY'):
-        month = 5
-    if(temp[1] == 'JUN'):
-        month = 6
-    if(temp[1] == 'JUL'):
-        month = 7
-    if(temp[1] == 'AUG'):
-        month = 8
-    if(temp[1] == 'SEP'):
-        month = 9
-    if(temp[1] == 'OCT'):
-        month = 10
-    if(temp[1] == 'NOV'):
-        month = 11
-    if(temp[1] == 'DEC'):
-        month = 12
-    return date(year, month, day)
-
-# returns the age for someone who is alive
-def age_alive(birth):
-    if birth is None:
-        return None
-    return int((date.today() - birth).days / 365)
-
-# returns the age for someone who is dead
-def age_dead(birth, death):
-    if birth is None or death is None:
-        return None
-    return int((death - birth).days / 365)
 
 #checks if each tag is valid or not
 # for line in array:
@@ -247,11 +174,8 @@ def organize(filename):
     for person in indivs:
         if(person['death'] == None):
             person['alive'] = True
-            person['death'] = 'N/A'
-            person['age'] = age_alive(date_format(person['birthday']))
         else:
             person['alive'] = False
-            person['age'] = age_dead(date_format(person['birthday']), date_format(person['death']))
     
     # gets the name of husband and wife for each family
     for family in fams:
@@ -302,3 +226,113 @@ def unique_family_id(filename):
     
     return True
     
+# user story 42: reject illegitimate dates
+def date_helper(day, month):
+    day = int(day)
+    if day < 1:
+        return False
+    if month == 'JAN' and day > 31:
+        return False
+    if month == 'FEB' and day > 28:
+        return False
+    if month == 'MAR' and day > 31:
+        return False
+    if month == 'APR' and day > 30:
+        return False
+    if month == 'MAY' and day > 31:
+        return False
+    if month == 'JUN' and day > 30:
+        return False
+    if month == 'JUL' and day > 31:
+        return False
+    if month == 'AUG' and day > 31:
+        return False
+    if month == 'SEP' and day > 30:
+        return False
+    if month == 'OCT' and day > 31:
+        return False
+    if month == 'NOV' and day > 30:
+        return False
+    if month == 'DEC' and day > 31:
+        return False
+    return True
+
+def date_checker(filename):
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    birthdays = []
+    deathdays = []
+    marriages = []
+    divorces = []
+
+    for person in individuals:
+        birthdays.append(person['birthday'])
+        deathdays.append(person['death'])
+    
+    for family in families:
+        marriages.append(family['married'])
+        divorces.append(family['divorced'])
+
+    # checking birthdates
+    for x in range(len(birthdays)):
+        if birthdays[x] is None:
+            continue
+        temp = birthdays[x].split(" ", 2)
+        if(len(temp) == 2):
+            if(exists(temp[0], months) == False):
+                return False
+        else:
+            if(exists(temp[1], months) == False):
+                return False
+            else:
+                if(date_helper(temp[0], temp[1]) == False):
+                    return False
+
+    #checking deathdates
+    for x in range(len(deathdays)):
+        if deathdays[x] is None:
+            continue
+        temp = deathdays[x].split(" ", 2)
+        if(len(temp) == 2):
+            if(exists(temp[0], months) == False):
+                return False
+        else:
+            if(exists(temp[1], months) == False):
+                return False
+            else:
+                if(date_helper(temp[0], temp[1]) == False):
+                    return False
+    
+    #checking marriage dates
+    for x in range(len(marriages)):
+        if marriages[x] is None:
+            continue
+        temp = marriages[x].split(" ", 2)
+        if(len(temp) == 2):
+            if(exists(temp[0], months) == False):
+                return False
+        else:
+            if(exists(temp[1], months) == False):
+                return False
+            else:
+                if(date_helper(temp[0], temp[1]) == False):
+                    return False
+
+    #checking divorce dates
+    for x in range(len(divorces)):
+        if divorces[x] is None:
+            continue
+        temp = divorces[x].split(" ", 2)
+        if(len(temp) == 2):
+            if(exists(temp[0], months) == False):
+                return False
+        else:
+            if(exists(temp[1], months) == False):
+                return False
+            else:
+                if(date_helper(temp[0], temp[1]) == False):
+                    return False
+
+    #all dates check out
+    return True
