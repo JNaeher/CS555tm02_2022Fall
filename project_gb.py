@@ -42,4 +42,4 @@ def valid_birth(filename):
 
 #user story 27: include individual ages
 
-print(valid_birth("Project_test_gb.ged"))
+print(valid_birth("Project_test2_gb.ged"))
