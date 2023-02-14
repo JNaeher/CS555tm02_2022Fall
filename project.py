@@ -187,9 +187,6 @@ def organize(filename):
                 family['hname'] = person['name']
             if(wife_id == person['ID']):
                 family['wname'] = person['name']
-    
-    printIndividuals(indivs, fams)
-    printFamilies(indivs, fams)
 
     file.close()
     return [indivs, fams]
@@ -200,17 +197,23 @@ def organize(filename):
 def unique_indiv_id(filename):
     data = organize(filename)
     individuals = data[0]
+    ids_names = []
     ids = []
+    value = True
     for person in individuals:
+        ids_names.append([person['ID'], person['name']])
         ids.append(person['ID'])
     
     for x in range(len(ids)):
         if(x == len(ids)-1):
-            return True
+            return value
         elif(exists(ids[x], ids[x+1:])):
-            return False
+            value = False
+            temp = ids_names[x]
+            print("Error US22: ID " + "(" + temp[0] + ") is a duplicate.")
+
     
-    return True
+    return value
 
 def unique_family_id(filename):
     data = organize(filename)
@@ -339,7 +342,13 @@ def date_checker(filename):
     return True
 
 def main():
-    organize(sys.argv[1])
+    fname = sys.argv[1]
+    data = organize(fname)
+    individuals = data[0]
+    families = data[1]
+    printIndividuals(individuals, families)
+    printFamilies(individuals, families)
+    unique_indiv_id(fname)
     return 
 
 if __name__ == "__main__":
