@@ -1,5 +1,6 @@
 from prettytable import PrettyTable
 from datetime import date
+import sys
 
 #reminder: output into a file
 
@@ -187,8 +188,8 @@ def organize(filename):
             if(wife_id == person['ID']):
                 family['wname'] = person['name']
     
-    # printIndividuals(indivs, fams)
-    # printFamilies(indivs, fams)
+    printIndividuals(indivs, fams)
+    printFamilies(indivs, fams)
 
     file.close()
     return [indivs, fams]
@@ -336,3 +337,10 @@ def date_checker(filename):
 
     #all dates check out
     return True
+
+def main():
+    organize(sys.argv[1])
+    return 
+
+if __name__ == "__main__":
+    main()
