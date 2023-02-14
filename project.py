@@ -197,11 +197,10 @@ def organize(filename):
 def unique_indiv_id(filename):
     data = organize(filename)
     individuals = data[0]
-    ids_names = []
     ids = []
+    dup_ids = []
     value = True
     for person in individuals:
-        ids_names.append([person['ID'], person['name']])
         ids.append(person['ID'])
     
     for x in range(len(ids)):
@@ -209,26 +208,36 @@ def unique_indiv_id(filename):
             return value
         elif(exists(ids[x], ids[x+1:])):
             value = False
-            temp = ids_names[x]
-            print("Error US22: ID " + "(" + temp[0] + ") is a duplicate.")
+            if(exists(ids[x], dup_ids)):
+                continue
+            else:
+                dup_ids.append(ids[x])
+                print("Error US22: Individual ID " + "(" + ids[x] + ") is a duplicate.")
 
-    
     return value
 
 def unique_family_id(filename):
     data = organize(filename)
     families = data[1]
     ids = []
-    for fam in families:
-        ids.append(fam['ID'])
+    dup_ids = []
+    value = True
 
+    for family in families:
+        ids.append(family['ID'])
+    
     for x in range(len(ids)):
         if(x == len(ids)-1):
-            return True
+            return value
         elif(exists(ids[x], ids[x+1:])):
-            return False
-    
-    return True
+            value = False
+            if(exists(ids[x], dup_ids)):
+                continue
+            else:
+                dup_ids.append(ids[x])
+                print("Error US22: Family ID " + "(" + ids[x] + ") is a duplicate.")
+                
+    return value
     
 # user story 42: reject illegitimate dates
 def date_helper(day, month):
@@ -342,13 +351,21 @@ def date_checker(filename):
     return True
 
 def main():
+    #getting data from the file given from command line
     fname = sys.argv[1]
     data = organize(fname)
     individuals = data[0]
     families = data[1]
+
+    #prints the tables
     printIndividuals(individuals, families)
     printFamilies(individuals, families)
+
+    #does the checking from the user stories
     unique_indiv_id(fname)
+    unique_family_id(fname)
+
+    
     return 
 
 if __name__ == "__main__":
