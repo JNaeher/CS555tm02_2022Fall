@@ -1,13 +1,13 @@
 from project import *
 
-#returns the diffence between 2 date strings
-#in terms of months
+# returns the diffence between 2 date strings
+# in terms of months
 def find_month_differance(start, end):
     dateStart = date_format(start)
     dateEnd = date_format(end)
-    return (dateStart - dateEnd).days / 30.48
+    return (dateStart - dateEnd).days / 30.417
 
-#user story 09: Birth Before Death of Parents
+# user story 09: Birth Before Death of Parents
 # check if birth's happen before death of the mother 
 # and 9 months before the death of the father
 def valid_birth(filename):
@@ -19,27 +19,23 @@ def valid_birth(filename):
         if(len(fam['children']) > 0):
             hid = fam['hid']
             wid = fam['wid']
-            cbirths = []
+            children = []
             for person in individuals:
                 if person['ID'] == hid:
-                    hdeath = person['death']
+                    hus = person
                 if person['ID'] == wid:
-                    wdeath = person['death']
+                    wif = person
                 for child in fam['children']:
                     if person['ID'] == child:
-                        cbirths.append(person['birthday'])
-            if (wdeath != 'N/A' or hdeath != 'N/A'):
-                for birth in cbirths:
-                    if (wdeath != 'N/A'):
-                        if(find_month_differance(birth,wdeath) > 0):
+                        children.append(person)
+            if (wif['death'] != 'N/A' or hus['death'] != 'N/A'):
+                for child in children:
+                    if (wif['death'] != 'N/A'):
+                        if(find_month_differance(child['birthday'],wif['death']) > 0):
                             validBirthdays = False
-                            print('Error: Wife Death Before Child Birth')
-                    if (hdeath != 'N/A'):
-                        if(find_month_differance(birth,hdeath) > 9):
+                            print('Error US09: ' + wif['name'] + "'s Death is before " + child['name'] + "'s Birth")
+                    if (hus['death'] != 'N/A'):
+                        if(find_month_differance(child['birthday'],hus['death']) > 9):
                             validBirthdays = False
-                            print('Error: Husband Death more than 9 months before Child Birth')
+                            print('Anomaly US09: ' + hus['name'] + "'s Death more than 9 months before " + child['name'] + "'s Birth")
     return(validBirthdays)
-
-#user story 27: include individual ages
-
-print(valid_birth("Project_test2_gb.ged"))
