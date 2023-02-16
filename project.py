@@ -167,6 +167,7 @@ def organize(filename):
             if(temp[2] == 'INDI'):
                 person = dict(ID = temp[1], name = None, gender = None, birthday = None, age = None, alive = None, death = None, child = None, spouse = None)
                 individual_helper(array[x+1:], person, indivs)
+                person['age'] = get_age(person)
             if(temp[2] == 'FAM'):
                 family = dict(ID = temp[1], married = None, divorced = None, hid = None, hname = None, wid = None, wname = None, children = [])
                 family_helper(array[x+1:], family, fams)
@@ -347,6 +348,93 @@ def date_checker(filename):
 
     return value
 
+# convert date string to date type
+def string_to_date(string):
+    if string is None:
+        return None
+    temp = string.split(" ", 2)
+    day = int(temp[0])
+    year = int(temp[2])
+    month = 0
+    if(temp[1] == 'JAN'):
+        month = 1
+    if(temp[1] == 'FEB'):
+        month = 2
+    if(temp[1] == 'MAR'):
+        month = 3
+    if(temp[1] == 'APR'):
+        month = 4
+    if(temp[1] == 'MAY'):
+        month = 5
+    if(temp[1] == 'JUN'):
+        month = 6
+    if(temp[1] == 'JUL'):
+        month = 7
+    if(temp[1] == 'AUG'):
+        month = 8
+    if(temp[1] == 'SEP'):
+        month = 9
+    if(temp[1] == 'OCT'):
+        month = 10
+    if(temp[1] == 'NOV'):
+        month = 11
+    if(temp[1] == 'DEC'):
+        month = 12
+    return date(year, month, day)
+
+# returns the diffence between 2 date strings
+# in terms of months
+def find_month_differance(start, end):
+    dateStart = string_to_date(start)
+    dateEnd = string_to_date(end)
+    return (dateStart - dateEnd).days / 30.417
+
+# user story 09: Birth Before Death of Parents
+# check if birth's happen before death of the mother 
+# and 9 months before the death of the father
+def valid_birth(data):
+    individuals = data[0]
+    families = data[1]
+    validBirthdays = True
+    for fam in families:
+        if(len(fam['children']) > 0):
+            hid = fam['hid']
+            wid = fam['wid']
+            children = []
+            for person in individuals:
+                if person['ID'] == hid:
+                    hus = person
+                if person['ID'] == wid:
+                    wif = person
+                for child in fam['children']:
+                    if person['ID'] == child:
+                        children.append(person)
+            if (wif['death'] != None or hus['death'] != None):
+                for child in children:
+                    if (wif['death'] != None):
+                        if(find_month_differance(child['birthday'],wif['death']) > 0):
+                            validBirthdays = False
+                            print('Error US09: ' + wif['name'] + "'s Death is before " + child['name'] + "'s Birth")
+                    if (hus['death'] != None):
+                        if(find_month_differance(child['birthday'],hus['death']) > 9):
+                            validBirthdays = False
+                            print('Anomaly US09: ' + hus['name'] + "'s Death more than 9 months before " + child['name'] + "'s Birth")
+    return(validBirthdays)
+
+# user story 27 get persons age
+def get_age(person):
+    if(person['birthday'] == None):
+        return 0
+    elif(person['death'] == None):
+        birthday = string_to_date(person['birthday'])
+        age = int((date.today() - birthday).days / 365)
+        return age
+    else:
+        birthday = string_to_date(person['birthday'])
+        death = string_to_date(person['death'])
+        age = int((death - birthday).days / 365)
+        return age
+
 def main():
     #getting data from the file given from command line
     fname = sys.argv[1]
@@ -359,6 +447,10 @@ def main():
     printFamilies(individuals, families)
 
     #does the checking from the user stories
+
+    #user story 09
+    if(valid_birth(data) == True):
+        print("Correct US09: Child born while parents where alive")
 
     #user story 22
     if(unique_indiv_id(fname) == True):

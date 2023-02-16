@@ -104,7 +104,8 @@ def valid_birth(filename):
     return(validBirthdays)
 
 # user story 27 get persons age
-def age(person):
+def get_age(person):
+    print(person)
     if(person['death'] == None):
         birthday = date_format(person['birthday'])
         return((date.today() - birthday) / 365)
