@@ -362,7 +362,7 @@ def male_lastname(filename):
         children=family['children']
         for child in children:
             for check in individuals:
-                if(child == check['ID']):
+                if((child == check['ID']) and (check['gender']=='M')):
                     childname=check['name']
                     childname = childname.split(" ")
                     childlastname = childname[1]
