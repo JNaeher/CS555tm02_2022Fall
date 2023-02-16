@@ -380,13 +380,18 @@ def string_to_date(string):
         month = 11
     if(temp[1] == 'DEC'):
         month = 12
-    return date(year, month, day)
+    if(date_helper(day,temp[1])):
+        return date(year, month, day)
+    else:
+        return None
 
 # returns the diffence between 2 date strings
 # in terms of months
 def find_month_differance(start, end):
     dateStart = string_to_date(start)
     dateEnd = string_to_date(end)
+    if dateStart == None or dateEnd == None:
+        return None
     return (dateStart - dateEnd).days / 30.417
 
 # user story 09: Birth Before Death of Parents
@@ -412,13 +417,21 @@ def valid_birth(data):
             if (wif['death'] != None or hus['death'] != None):
                 for child in children:
                     if (wif['death'] != None):
-                        if(find_month_differance(child['birthday'],wif['death']) > 0):
+                        monthDif = find_month_differance(child['birthday'],wif['death'])
+                        if(monthDif == None):
+                            validBirthdays = False
+                            print("Error US09: Invalid Data")
+                        elif(monthDif > 0):
                             validBirthdays = False
                             print('Error US09: ' + wif['name'] + "'s Death is before " + child['name'] + "'s Birth")
                     if (hus['death'] != None):
-                        if(find_month_differance(child['birthday'],hus['death']) > 9):
+                        monthDif = find_month_differance(child['birthday'],hus['death'])
+                        if(monthDif == None):
                             validBirthdays = False
-                            print('Anomaly US09: ' + hus['name'] + "'s Death more than 9 months before " + child['name'] + "'s Birth")
+                            print("Error US09: Invalid Data")
+                        elif(monthDif > 9):
+                            validBirthdays = False
+                            print('Anomaly US09: ' + hus['name'] + "'s Death is more than 9 months before " + child['name'] + "'s Birth")
     return(validBirthdays)
 
 # user story 27 get persons age
@@ -427,11 +440,17 @@ def get_age(person):
         return -1
     elif(person['death'] == None):
         birthday = string_to_date(person['birthday'])
+        if(birthday == None):
+            return -1
         age = int((date.today() - birthday).days / 365)
         return age
     else:
         birthday = string_to_date(person['birthday'])
+        if(birthday == None):
+            return -1
         death = string_to_date(person['death'])
+        if(death == None):
+            return -1
         age = int((death - birthday).days / 365)
         return age
 
