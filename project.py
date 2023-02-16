@@ -1,9 +1,11 @@
 from prettytable import PrettyTable
 from datetime import date
+import sys
 
 #reminder: output into a file
 
 tags = ["INDI", "NAME", "SEX", "BIRT", "DEAT", "FAMC", "FAMS", "FAM", "MARR", "HUSB", "WIFE", "CHIL", "DIV", "DATE", "HEAD", "TRLR", "NOTE"]
+months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
 
 # checks to see if an element is in a list
 def exists(elem, list):
@@ -11,80 +13,6 @@ def exists(elem, list):
         if(a == elem):
             return True
     return False
-
-# turns a string into a date object
-def date_format(string):
-    if string is None:
-        return None
-    temp = string.split(" ", 2)
-    if(len(temp) == 2):
-        month = 0
-        if(temp[1] == 'JAN'):
-            month = 1
-        if(temp[1] == 'FEB'):
-            month = 2
-        if(temp[1] == 'MAR'):
-            month = 3
-        if(temp[1] == 'APR'):
-            month = 4
-        if(temp[1] == 'MAY'):
-            month = 5
-        if(temp[1] == 'JUN'):
-            month = 6
-        if(temp[1] == 'JUL'):
-            month = 7
-        if(temp[1] == 'AUG'):
-            month = 8
-        if(temp[1] == 'SEP'):
-            month = 9
-        if(temp[1] == 'OCT'):
-            month = 10
-        if(temp[1] == 'NOV'):
-            month = 11
-        if(temp[1] == 'DEC'):
-            month = 12
-        year = int(temp[1])
-        return date(year, month)
-    day = int(temp[0])
-    year = int(temp[2])
-    month = 0
-    if(temp[1] == 'JAN'):
-        month = 1
-    if(temp[1] == 'FEB'):
-        month = 2
-    if(temp[1] == 'MAR'):
-        month = 3
-    if(temp[1] == 'APR'):
-        month = 4
-    if(temp[1] == 'MAY'):
-        month = 5
-    if(temp[1] == 'JUN'):
-        month = 6
-    if(temp[1] == 'JUL'):
-        month = 7
-    if(temp[1] == 'AUG'):
-        month = 8
-    if(temp[1] == 'SEP'):
-        month = 9
-    if(temp[1] == 'OCT'):
-        month = 10
-    if(temp[1] == 'NOV'):
-        month = 11
-    if(temp[1] == 'DEC'):
-        month = 12
-    return date(year, month, day)
-
-# returns the age for someone who is alive
-def age_alive(birth):
-    if birth is None:
-        return None
-    return int((date.today() - birth).days / 365)
-
-# returns the age for someone who is dead
-def age_dead(birth, death):
-    if birth is None or death is None:
-        return None
-    return int((death - birth).days / 365)
 
 #checks if each tag is valid or not
 # for line in array:
@@ -247,11 +175,8 @@ def organize(filename):
     for person in indivs:
         if(person['death'] == None):
             person['alive'] = True
-            person['death'] = 'N/A'
-            person['age'] = age_alive(date_format(person['birthday']))
         else:
             person['alive'] = False
-            person['age'] = age_dead(date_format(person['birthday']), date_format(person['death']))
     
     # gets the name of husband and wife for each family
     for family in fams:
@@ -262,9 +187,6 @@ def organize(filename):
                 family['hname'] = person['name']
             if(wife_id == person['ID']):
                 family['wname'] = person['name']
-    
-    # printIndividuals(indivs, fams)
-    # printFamilies(indivs, fams)
 
     file.close()
     return [indivs, fams]
@@ -276,29 +198,181 @@ def unique_indiv_id(filename):
     data = organize(filename)
     individuals = data[0]
     ids = []
+    dup_ids = []
+    value = True
     for person in individuals:
         ids.append(person['ID'])
     
     for x in range(len(ids)):
         if(x == len(ids)-1):
-            return True
+            return value
         elif(exists(ids[x], ids[x+1:])):
-            return False
-    
-    return True
+            value = False
+            if(exists(ids[x], dup_ids)):
+                continue
+            else:
+                dup_ids.append(ids[x])
+                print("Error US22: Individual ID " + "(" + ids[x] + ") is a duplicate.")
+
+    return value
 
 def unique_family_id(filename):
     data = organize(filename)
     families = data[1]
     ids = []
-    for fam in families:
-        ids.append(fam['ID'])
+    dup_ids = []
+    value = True
 
+    for family in families:
+        ids.append(family['ID'])
+    
     for x in range(len(ids)):
         if(x == len(ids)-1):
-            return True
+            return value
         elif(exists(ids[x], ids[x+1:])):
-            return False
+            value = False
+            if(exists(ids[x], dup_ids)):
+                continue
+            else:
+                dup_ids.append(ids[x])
+                print("Error US22: Family ID " + "(" + ids[x] + ") is a duplicate.")
+                
+    return value
     
+# user story 42: reject illegitimate dates
+def date_helper(day, month):
+    day = int(day)
+    if day < 1 or day > 31:
+        return False
+    if month == 'JAN' and day > 31:
+        return False
+    if month == 'FEB' and day > 28:
+        return False
+    if month == 'MAR' and day > 31:
+        return False
+    if month == 'APR' and day > 30:
+        return False
+    if month == 'MAY' and day > 31:
+        return False
+    if month == 'JUN' and day > 30:
+        return False
+    if month == 'JUL' and day > 31:
+        return False
+    if month == 'AUG' and day > 31:
+        return False
+    if month == 'SEP' and day > 30:
+        return False
+    if month == 'OCT' and day > 31:
+        return False
+    if month == 'NOV' and day > 30:
+        return False
+    if month == 'DEC' and day > 31:
+        return False
     return True
+
+def date_checker(filename):
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+
+    value = True
     
+    #check dates for individuals
+    for person in individuals:
+
+        birthday = person['birthday']
+        deathday = person['death']
+
+        if(birthday == None):
+            birthday = "1 JAN 2000"
+        if(deathday == None):
+            deathday = "1 JAN 2000"
+
+        birthday = birthday.split(" ", 2)
+        deathday = deathday.split(" ", 2)
+
+        if(len(birthday) == 2):
+            if(exists(birthday[0], months) == False):
+                value = False
+                print("Error US42: " + person['name'] + " has an illegitimate birthday.")
+
+        if(len(deathday) == 2):
+            if(exists(deathday[0], months) == False):
+                value = False
+                print("Error US42: " + person['name'] + " has an illegitimate death date.")
+
+        if(len(birthday) == 3):
+            if(date_helper(birthday[0], birthday[1]) == False):
+                value = False
+                print("Error US42: " + person['name'] + " has an illegitimate birthday.")
+
+        if(len(deathday) == 3):
+            if(date_helper(deathday[0], deathday[1]) == False):
+                value = False
+                print("Error US42: " + person['name'] + " has an illegitimate death date.")
+
+    #check dates for families
+
+    for family in families:
+        marriage = family['married']
+        divorce = family['divorced']
+
+        if(marriage == None):
+            marriage = "1 JAN 2000"
+        if(divorce == None):
+            divorce = "1 JAN 2000"
+
+        marriage = marriage.split(" ", 2)
+        divorce = divorce.split(" ", 2)
+
+        if(len(marriage) == 2):
+            if(exists(marriage[0], months) == False):
+                value = False
+                print("Error US42: " + family['ID'] + " has an illegitimate marriage date.")
+
+        if(len(divorce) == 2):
+            if(exists(divorce[0], months) == False):
+                value = False
+                print("Error US42: " + family['ID'] + " has an illegitimate divorce date.")
+
+        if(len(marriage) == 3):
+            if(date_helper(marriage[0], marriage[1]) == False):
+                value = False
+                print("Error US42: " + family['ID'] + " has an illegitimate marriage date.")
+
+        if(len(divorce) == 3):
+            if(date_helper(divorce[0], divorce[1]) == False):
+                value = False
+                print("Error US42: " + family['ID'] + " has an illegitimate divorce date.")
+
+    return value
+
+def main():
+    #getting data from the file given from command line
+    fname = sys.argv[1]
+    data = organize(fname)
+    individuals = data[0]
+    families = data[1]
+
+    #prints the tables
+    printIndividuals(individuals, families)
+    printFamilies(individuals, families)
+
+    #does the checking from the user stories
+
+    #user story 22
+    if(unique_indiv_id(fname) == True):
+        print("Correct US22: All individual IDs are unique.")
+    
+    if(unique_family_id(fname) == True):
+        print("Correct US22: All family IDs are unique.")
+
+    #user story 42
+    if(date_checker(fname) == True):
+        print("Correct US42: All dates are legitimate")
+
+
+    return 
+
+if __name__ == "__main__":
+    main()
