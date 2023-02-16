@@ -1,4 +1,67 @@
 from project import *
+from datetime import date
+
+# convert date string to date type
+def date_format(string):
+    if string is None:
+        return None
+    temp = string.split(" ", 2)
+    if(len(temp) == 2):
+        month = 0
+        if(temp[1] == 'JAN'):
+            month = 1
+        if(temp[1] == 'FEB'):
+            month = 2
+        if(temp[1] == 'MAR'):
+            month = 3
+        if(temp[1] == 'APR'):
+            month = 4
+        if(temp[1] == 'MAY'):
+            month = 5
+        if(temp[1] == 'JUN'):
+            month = 6
+        if(temp[1] == 'JUL'):
+            month = 7
+        if(temp[1] == 'AUG'):
+            month = 8
+        if(temp[1] == 'SEP'):
+            month = 9
+        if(temp[1] == 'OCT'):
+            month = 10
+        if(temp[1] == 'NOV'):
+            month = 11
+        if(temp[1] == 'DEC'):
+            month = 12
+        year = int(temp[1])
+        return date(year, month)
+    day = int(temp[0])
+    year = int(temp[2])
+    month = 0
+    if(temp[1] == 'JAN'):
+        month = 1
+    if(temp[1] == 'FEB'):
+        month = 2
+    if(temp[1] == 'MAR'):
+        month = 3
+    if(temp[1] == 'APR'):
+        month = 4
+    if(temp[1] == 'MAY'):
+        month = 5
+    if(temp[1] == 'JUN'):
+        month = 6
+    if(temp[1] == 'JUL'):
+        month = 7
+    if(temp[1] == 'AUG'):
+        month = 8
+    if(temp[1] == 'SEP'):
+        month = 9
+    if(temp[1] == 'OCT'):
+        month = 10
+    if(temp[1] == 'NOV'):
+        month = 11
+    if(temp[1] == 'DEC'):
+        month = 12
+    return date(year, month, day)
 
 # returns the diffence between 2 date strings
 # in terms of months
@@ -39,3 +102,16 @@ def valid_birth(filename):
                             validBirthdays = False
                             print('Anomaly US09: ' + hus['name'] + "'s Death more than 9 months before " + child['name'] + "'s Birth")
     return(validBirthdays)
+
+# user story 27 get persons age
+def age(person):
+    if(person['death'] == None):
+        birthday = date_format(person['birthday'])
+        return((date.today() - birthday) / 365)
+    else:
+        birthday = date_format(person['birthday'])
+        death = date_format(person['death'])
+        age = death - birthday
+        if(age < 0):
+            print('Error US27: ' + person['name'] + "'s Age is invalid")
+        return((death - birthday) / 365)
