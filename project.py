@@ -1,3 +1,4 @@
+from unittest import skip
 from prettytable import PrettyTable
 from datetime import date
 import sys
@@ -346,6 +347,47 @@ def date_checker(filename):
                 print("Error US42: " + family['ID'] + " has an illegitimate divorce date.")
 
     return value
+# user story 16: male last names
+def male_lastname(filename):
+    val=True
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    for family in families:
+        malename=family['hname']
+        if(malename==None):
+            break
+        malename = malename.split(" ")
+        headlastname = malename[1]
+        children=family['children']
+        for child in children:
+            for check in individuals:
+                if(child == check['ID']):
+                    childname=check['name']
+                    childname = childname.split(" ")
+                    childlastname = childname[1]
+                    if(childlastname!=headlastname):
+                        print("Error US16: the males in the family " + family['ID'] + " do not all have the same last name.")
+                        val=False
+    return val
+
+# user story 18: siblings cannot get married 
+def sibs_nomarry(filename):
+    spouse='NONE'
+    val= True
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    for fam in families:
+        children= fam['children']
+        for child in children:
+            for check in individuals:
+                if(child==check['ID']):
+                    spouse=check['spouse']
+            if (spouse in children):
+                val= False
+    return val 
+
 
 def main():
     #getting data from the file given from command line
@@ -371,8 +413,13 @@ def main():
     if(date_checker(fname) == True):
         print("Correct US42: All dates are legitimate")
 
-    #khushi user story
+    #khushi user story 16
+    if(male_lastname(fname) == True):
+        print("Correct US16: All male names are the same")
 
+    #khushi user story 18
+    if(sibs_nomarry(fname) == True):
+        print("Correct US18: No siblings are married to each other")
 
     return 
 
