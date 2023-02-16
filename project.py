@@ -424,7 +424,7 @@ def valid_birth(data):
 # user story 27 get persons age
 def get_age(person):
     if(person['birthday'] == None):
-        return 0
+        return -1
     elif(person['death'] == None):
         birthday = string_to_date(person['birthday'])
         age = int((date.today() - birthday).days / 365)
@@ -450,7 +450,7 @@ def main():
 
     #user story 09
     if(valid_birth(data) == True):
-        print("Correct US09: Child born while parents where alive")
+        print("Correct US09: All Children born while parents where alive")
 
     #user story 22
     if(unique_indiv_id(fname) == True):
