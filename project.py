@@ -637,6 +637,10 @@ def main():
     if(valid_birth(data) == True):
         print("Correct US09: All Children born while parents where alive")
 
+    #user story 09
+    if(valid_birth(data) == True):
+        print("Correct US09: All Children born while parents where alive")
+
     #user story 22
     if(unique_indiv_id(fname) == True):
         print("Correct US22: All individual IDs are unique.")
@@ -648,6 +652,21 @@ def main():
     if(date_checker(fname) == True):
         print("Correct US42: All dates are legitimate")
 
+    #khushi user story 16
+    if(male_lastname(fname) == True):
+        print("Correct US16: All male names are the same")
+
+    #khushi user story 18
+    if(sibs_nomarry(fname) == True):
+        print("Correct US18: No siblings are married to each other")
+
+    #user story 06
+    if(divorce_before_death(fname) == True):
+        print("Correct US06: All divorces occur before individual deaths.")
+
+    #user story 10
+    if(marriage_after_14(fname) == True):
+        print("Correct US10: All marriages occur after individuals turn 14.")
     #khushi user story 16
     if(male_lastname(fname) == True):
         print("Correct US16: All male names are the same")
