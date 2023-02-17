@@ -622,6 +622,7 @@ def get_age(person):
 
 def main():
     #getting data from the file given from command line
+
     fname = sys.argv[1]
     data = organize(fname)
     individuals = data[0]
