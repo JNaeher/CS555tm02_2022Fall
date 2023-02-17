@@ -1,3 +1,4 @@
+from unittest import skip
 from prettytable import PrettyTable
 from datetime import date
 import sys
@@ -167,6 +168,7 @@ def organize(filename):
             if(temp[2] == 'INDI'):
                 person = dict(ID = temp[1], name = None, gender = None, birthday = None, age = None, alive = None, death = None, child = None, spouse = None)
                 individual_helper(array[x+1:], person, indivs)
+                person['age'] = get_age(person)
             if(temp[2] == 'FAM'):
                 family = dict(ID = temp[1], married = None, divorced = None, hid = None, hname = None, wid = None, wname = None, children = [])
                 family_helper(array[x+1:], family, fams)
@@ -470,6 +472,153 @@ def date_checker(filename):
                 print("Error US42: " + family['ID'] + " has an illegitimate divorce date.")
 
     return value
+# user story 16: male last names
+def male_lastname(filename):
+    val=True
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    for family in families:
+        malename=family['hname']
+        if(malename==None):
+            break
+        malename = malename.split(" ")
+        headlastname = malename[1]
+        children=family['children']
+        for child in children:
+            for check in individuals:
+                if((child == check['ID']) and (check['gender']=='M')):
+                    childname=check['name']
+                    childname = childname.split(" ")
+                    childlastname = childname[1]
+                    if(childlastname!=headlastname):
+                        print("Error US16: the males in the family " + family['ID'] + " do not all have the same last name.")
+                        val=False
+    return val
+
+# user story 18: siblings cannot get married 
+def sibs_nomarry(filename):
+    spouse='NONE'
+    val= True
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    for fam in families:
+        children= fam['children']
+        for child in children:
+            for check in individuals:
+                if(child==check['ID']):
+                    spouse=check['spouse']
+            if (spouse in children):
+                val= False
+    return val 
+
+
+# convert date string to date type
+def string_to_date(string):
+    if string is None:
+        return None
+    temp = string.split(" ", 2)
+    day = int(temp[0])
+    year = int(temp[2])
+    month = 0
+    if(temp[1] == 'JAN'):
+        month = 1
+    if(temp[1] == 'FEB'):
+        month = 2
+    if(temp[1] == 'MAR'):
+        month = 3
+    if(temp[1] == 'APR'):
+        month = 4
+    if(temp[1] == 'MAY'):
+        month = 5
+    if(temp[1] == 'JUN'):
+        month = 6
+    if(temp[1] == 'JUL'):
+        month = 7
+    if(temp[1] == 'AUG'):
+        month = 8
+    if(temp[1] == 'SEP'):
+        month = 9
+    if(temp[1] == 'OCT'):
+        month = 10
+    if(temp[1] == 'NOV'):
+        month = 11
+    if(temp[1] == 'DEC'):
+        month = 12
+    if(date_helper(day,temp[1])):
+        return date(year, month, day)
+    else:
+        return None
+
+# returns the diffence between 2 date strings
+# in terms of months
+def find_month_differance(start, end):
+    dateStart = string_to_date(start)
+    dateEnd = string_to_date(end)
+    if dateStart == None or dateEnd == None:
+        return None
+    return (dateStart - dateEnd).days / 30.417
+
+# user story 09: Birth Before Death of Parents
+# check if birth's happen before death of the mother 
+# and 9 months before the death of the father
+def valid_birth(data):
+    individuals = data[0]
+    families = data[1]
+    validBirthdays = True
+    for fam in families:
+        if(len(fam['children']) > 0):
+            hid = fam['hid']
+            wid = fam['wid']
+            children = []
+            for person in individuals:
+                if person['ID'] == hid:
+                    hus = person
+                if person['ID'] == wid:
+                    wif = person
+                for child in fam['children']:
+                    if person['ID'] == child:
+                        children.append(person)
+            if (wif['death'] != None or hus['death'] != None):
+                for child in children:
+                    if (wif['death'] != None):
+                        monthDif = find_month_differance(child['birthday'],wif['death'])
+                        if(monthDif == None):
+                            validBirthdays = False
+                            print("Error US09: Invalid Data")
+                        elif(monthDif > 0):
+                            validBirthdays = False
+                            print('Error US09: ' + wif['name'] + "'s Death is before " + child['name'] + "'s Birth")
+                    if (hus['death'] != None):
+                        monthDif = find_month_differance(child['birthday'],hus['death'])
+                        if(monthDif == None):
+                            validBirthdays = False
+                            print("Error US09: Invalid Data")
+                        elif(monthDif > 9):
+                            validBirthdays = False
+                            print('Anomaly US09: ' + hus['name'] + "'s Death is more than 9 months before " + child['name'] + "'s Birth")
+    return(validBirthdays)
+
+# user story 27 get persons age
+def get_age(person):
+    if(person['birthday'] == None):
+        return -1
+    elif(person['death'] == None):
+        birthday = string_to_date(person['birthday'])
+        if(birthday == None):
+            return -1
+        age = int((date.today() - birthday).days / 365)
+        return age
+    else:
+        birthday = string_to_date(person['birthday'])
+        if(birthday == None):
+            return -1
+        death = string_to_date(person['death'])
+        if(death == None):
+            return -1
+        age = int((death - birthday).days / 365)
+        return age
 
 def main():
     #getting data from the file given from command line
@@ -484,6 +633,10 @@ def main():
 
     #does the checking from the user stories
 
+    #user story 09
+    if(valid_birth(data) == True):
+        print("Correct US09: All Children born while parents where alive")
+
     #user story 22
     if(unique_indiv_id(fname) == True):
         print("Correct US22: All individual IDs are unique.")
@@ -495,6 +648,21 @@ def main():
     if(date_checker(fname) == True):
         print("Correct US42: All dates are legitimate")
 
+    #khushi user story 16
+    if(male_lastname(fname) == True):
+        print("Correct US16: All male names are the same")
+
+    #khushi user story 18
+    if(sibs_nomarry(fname) == True):
+        print("Correct US18: No siblings are married to each other")
+
+    #user story 06
+    if(divorce_before_death(fname) == True):
+        print("Correct US06: All divorces occur before individual deaths.")
+
+    #user story 10
+    if(marriage_after_14(fname) == True):
+        print("Correct US10: All marriages occur after individuals turn 14.")
 
     return 
 
