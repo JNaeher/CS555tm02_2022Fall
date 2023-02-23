@@ -620,6 +620,17 @@ def get_age(person):
         age = int((death - birthday).days / 365)
         return age
 
+#user story 29, list deceased
+def list_deceased(filename):
+    data = organize(filename)
+    individuals = data[0]
+    temp = True
+    for person in individuals:
+        if(person['alive'] == False):
+            print(person['name'] + " is deceased.")
+            temp = False
+    return temp
+
 def main():
     #getting data from the file given from command line
 
@@ -675,6 +686,9 @@ def main():
     #khushi user story 18
     if(sibs_nomarry(fname) == True):
         print("Correct US18: No siblings are married to each other")
+
+    if(list_deceased(fname) == False):
+        print("US 29: No deceased in this family tree.")
 
     return 
 
