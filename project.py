@@ -627,10 +627,43 @@ def list_deceased(filename):
     temp = True
     for person in individuals:
         if(person['alive'] == False):
-            print(person['name'] + " is deceased.")
+            print("US 29: " + person['name'] + " is deceased.")
             temp = False
     return temp
 
+#user story 01, dates after current date
+def dates_after_current(filename):
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    temp = True
+    current_date = date.today()
+    for person in individuals:
+        birth = string_to_date(person['birthday'])
+        death = string_to_date(person['death'])
+        if(birth is not None):
+            if(birth > current_date):
+                temp = False
+                print("Anomoly US01: " + person['name'] + " has a birthday after today's date.")
+        if(death is not None):
+            if(death > current_date):
+                temp = False
+                print("Anomoly US01: " + person['name'] + " has a death date after today's date.")
+
+    for family in families:
+        marriage = string_to_date(family['married'])
+        divorced = string_to_date(family['divorced'])
+        if(marriage is not None):
+            if(marriage > current_date):
+                temp = False
+                print("Anomoly US01: " + family['ID'] + " has a marriage date after today's date.")
+
+        if(divorced is not None):
+            if(divorced > current_date):
+                temp = False
+                print("Anomoly US01: " + family['ID'] + " has a divorce date after today's date.")
+
+    return temp
 def main():
     #getting data from the file given from command line
 
@@ -687,8 +720,11 @@ def main():
     if(sibs_nomarry(fname) == True):
         print("Correct US18: No siblings are married to each other")
 
-    if(list_deceased(fname) == False):
+    if(list_deceased(fname) == True):
         print("US 29: No deceased in this family tree.")
+
+    if(dates_after_current(fname) == True):
+        print("US 01: All dates are before current date")
 
     return 
 
