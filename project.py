@@ -652,6 +652,16 @@ def get_age(person):
         age = int((death - birthday).days / 365)
         return age
 
+# user story 35
+def recent_births(data):
+    individuals = data[0]
+    recentBirths = []
+    for indiv in  individuals:
+        birthday = string_to_date(birthday_finder(individuals , indiv['ID']))
+        if((date.today() - birthday).days <= 30):
+            recentBirths.append(indiv)
+    return(recentBirths)
+
 def main():
     #getting data from the file given from command line
 
@@ -664,11 +674,14 @@ def main():
     printIndividuals(individuals, families)
     printFamilies(individuals, families)
 
+    
+    recent_birth = recent_births(data)
+    if(len(recent_birth) > 0):
+        print("\nRecent Births in the last 30 days:")
+        printIndividuals(recent_birth, families)
+    else:
+        print("\nNo Recent Births in the last 30 days:")
     #does the checking from the user stories
-
-    #user story 09
-    if(valid_birth(data) == True):
-        print("Correct US09: All Children born while parents where alive")
 
     #user story 09
     if(valid_birth(data) == True):
