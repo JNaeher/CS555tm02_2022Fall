@@ -317,6 +317,38 @@ def marriage_after_14(filename):
             print("Error US10: Marriage occurs before individual ID (" + wife_id + ") turned 14 years old.")
     return valid
 
+#user story 25
+
+#checks that no more than one child with the same name and birth date appears in a family
+def unique_firstnames_in_fam(filename):
+    valid = True
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    for family in families:
+        names = []
+        birthdays = []
+        children = family['children']
+        for child in children:
+            childname = ''
+            childbirthday = ''
+            childid = ''
+            for check in individuals:
+                if((child == check['ID'])):
+                    childname = check['name']
+                    childname = childname.split(" ")
+                    childfirstname = childname[0]
+                    childbirthday = birthday_finder(individuals, check['ID'])
+                    childid = check['ID']
+            length = len(names)
+            for i in range(length):
+                if(childfirstname == names[i] and childbirthday == birthdays[i]):
+                    valid = False
+                    print("Error US25: Child with ID " + childid + " shares a first name and birthday with one or more of their siblings.")
+            names.append(childfirstname)
+            birthdays.append(childbirthday)
+    return valid
+
 #user story 22: unique id's
 
 #checking for unique individual ids
@@ -663,6 +695,10 @@ def main():
     #user story 10
     if(marriage_after_14(fname) == True):
         print("Correct US10: All marriages occur after individuals turn 14.")
+
+    #user story 25
+    if(unique_firstnames_in_fam(fname) == True):
+        print("Correct US25: All siblings have unique name and birthday combinations.")
 
     return 
 
