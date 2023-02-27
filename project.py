@@ -349,6 +349,23 @@ def unique_firstnames_in_fam(filename):
             birthdays.append(childbirthday)
     return valid
 
+#user story 23: unique name and birth date
+def unique_name_id(filename):
+    valid = True
+    data = organize(filename)
+    individuals = data[0]
+    names = []
+    birthdays = []
+    for individual in individuals:
+        indiv_name = individual['name']
+        indiv_bday = string_to_date(birthday_finder(individuals, individual['ID']))
+        for i in range(len(names)):
+            if(indiv_name == names[i] and indiv_bday == birthdays[i]):
+                valid = False
+                print("Error US23: Individual with ID " + individual['ID'] + " shares a name and birthday with one or more individuals.")
+        names.append(indiv_name)
+        birthdays.append(indiv_bday)
+
 #user story 22: unique id's
 
 #checking for unique individual ids
@@ -695,6 +712,10 @@ def main():
     #user story 10
     if(marriage_after_14(fname) == True):
         print("Correct US10: All marriages occur after individuals turn 14.")
+
+    #user story 23
+    if(unique_name_id(fname) == True):
+        print("Correct US23: All individuals have unique name and birthday combinations.")
 
     #user story 25
     if(unique_firstnames_in_fam(fname) == True):
