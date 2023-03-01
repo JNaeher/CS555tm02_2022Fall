@@ -17,6 +17,18 @@ class TestUS01(unittest.TestCase):
     def test_date(self):
         self.assertEqual(dates_after_current('test_file.ged'), True)
 
+class TestUS16(unittest.TestCase):
+    def test_malelastnames(self):
+        self.assertEqual(male_lastname('test_file.ged'), False)
+
+class TestUS18(unittest.TestCase):
+    def test_sibs_nomarry(self):
+        self.assertEqual(sibs_nomarry('test_file.ged'), True)
+
 class TestUS12(unittest.TestCase):
-    def test_parents_not_old(self):
+    def test_parents_notold(self):
         self.assertEqual(parents_notold('test_file.ged'), True)
+
+class TestUS30(unittest.TestCase):
+    def test_livingmarried(self):
+        self.assertEqual(livingmarried('test_file.ged'), True)
