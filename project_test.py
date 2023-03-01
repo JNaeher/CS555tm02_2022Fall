@@ -16,3 +16,7 @@ class TestUS29(unittest.TestCase):
 class TestUS01(unittest.TestCase):
     def test_date(self):
         self.assertEqual(dates_after_current('test_file.ged'), True)
+
+class TestUS12(unittest.TestCase):
+    def test_parents_not_old(self):
+        self.assertEqual(parents_notold('test_file.ged'), True)
