@@ -478,17 +478,19 @@ def main():
     if(date_checker(fname) == True):
         print("Correct US42: All dates are legitimate")
 
-    #khushi user story 16
+    #khushi's user story 16
     if(male_lastname(fname) == True):
         print("Correct US16: All male names are the same")
 
-    #khushi user story 18
+    #khushi's user story 18
     if(sibs_nomarry(fname) == True):
         print("Correct US18: No siblings are married to each other")
     
+    #khushi's user story 12
     if(parents_notold(fname) == True):
         print("Correct US12: Mother should be less than 60 years older than her children and father should be less than 80 years older than his children")
 
+    #khushi's user story 30
     if(livingmarried(fname) == True):
         print("Correct US30: List living married people")
 
