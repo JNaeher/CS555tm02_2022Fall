@@ -193,6 +193,162 @@ def organize(filename):
     file.close()
     return [indivs, fams]
 
+# convert date string to date type
+
+def string_to_date(string): 
+    x = 0
+    if string is None:
+        return None
+    temp = string.split(" ", 2)
+    if(len(temp) == 3):
+        day = int(temp[0])
+        year = int(temp[2])
+        month = 0
+        x = 1
+    else:
+        year = int(temp[1])
+        month = 0
+        day = 1
+    
+    if(temp[x] == 'JAN'):
+        month = 1
+    if(temp[x] == 'FEB'):
+        month = 2
+    if(temp[x] == 'MAR'):
+        month = 3
+    if(temp[x] == 'APR'):  
+        month = 4
+    if(temp[x] == 'MAY'):
+        month = 5
+    if(temp[x] == 'JUN'):
+        month = 6
+    if(temp[x] == 'JUL'):
+        month = 7
+    if(temp[x] == 'AUG'):
+        month = 8
+    if(temp[x] == 'SEP'):
+        month = 9
+    if(temp[x] == 'OCT'):
+        month = 10
+    if(temp[x] == 'NOV'):
+        month = 11 
+    if(temp[x] == 'DEC'):
+        month = 12
+    if(date_helper(day,temp[x])):
+        return date(year, month, day)
+    else:
+        return None
+
+#user story #6
+
+#given an id, return the death associated with it
+def death_finder(individuals,id):
+    for individual in individuals:
+        if(individual['ID'] == id):
+            return individual['death']
+
+#check if divorce occurs before death of both individuals
+def divorce_before_death(filename):
+    valid = True
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    for family in families:
+        hus_id = family['hid']
+        hus_death_str = death_finder(individuals,hus_id)
+        hus_death = string_to_date(hus_death_str)
+        wife_id = family['wid']
+        wife_death_str = death_finder(individuals,wife_id)
+        wife_death = string_to_date(wife_death_str)
+        div_date_str = family['divorced']
+        div_date = string_to_date(div_date_str)
+        if(div_date == None):
+            continue
+        elif((hus_death == None) and (wife_death == None)):
+            continue
+        elif((hus_death != None) and (wife_death != None) and (hus_death < div_date) and (wife_death < div_date)):
+            valid = False
+            print("Error US06: Individual ID's (" + hus_id + "), (" + wife_id + ") deaths occur before the divorce date.")
+        elif((hus_death != None) and (hus_death < div_date)):
+            valid = False
+            print("Error US06: Individual ID (" + hus_id + ") death occurs before the divorce date.")
+        elif((wife_death != None) and (wife_death < div_date)):
+            valid = False
+            print("Error US06: Individual ID (" + wife_id + ") death occur before the divorce date.")
+    return valid
+
+
+#user story 10: marriage after 14
+
+#given an id, return the birthday associated with it
+def birthday_finder(individuals,id):
+    for individual in individuals:
+        if(individual['ID'] == id):
+            return individual['birthday']
+
+#check if marriage occurs before either individual turns 14 years old
+def marriage_after_14(filename):
+    valid = True
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    for family in families:
+        hus_id = family['hid']
+        hus_birthday_str = birthday_finder(individuals,hus_id)
+        hus_birthday = string_to_date(hus_birthday_str)
+        hus_14 = hus_birthday.replace(year=hus_birthday.year+14)
+        wife_id = family['wid']
+        wife_birthday_str = birthday_finder(individuals,wife_id)
+        wife_birthday = string_to_date(wife_birthday_str)
+        wife_14 = wife_birthday.replace(year=wife_birthday.year+14)
+        marriage_date_str = family['married']
+        marriage_date = string_to_date(marriage_date_str)
+
+        if(marriage_date == None):
+            continue
+        elif((hus_14 > marriage_date) and (wife_14 > marriage_date)):
+            valid = False
+            print("Error US10: Marriage occurs before individual ID's (" + wife_id + "), (" + hus_id + ") turned 14 years old.")
+        elif(hus_14 > marriage_date):
+            valid = False
+            print("Error US10: Marriage occurs before individual ID (" + hus_id + ") turned 14 years old.")
+        elif(wife_14 > marriage_date):
+            valid = False
+            print("Error US10: Marriage occurs before individual ID (" + wife_id + ") turned 14 years old.")
+    return valid
+
+#user story 25
+
+#checks that no more than one child with the same name and birth date appears in a family
+def unique_firstnames_in_fam(filename):
+    valid = True
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    for family in families:
+        names = []
+        birthdays = []
+        children = family['children']
+        for child in children:
+            childname = ''
+            childbirthday = ''
+            childid = ''
+            for check in individuals:
+                if((child == check['ID'])):
+                    childname = check['name']
+                    childname = childname.split(" ")
+                    childfirstname = childname[0]
+                    childbirthday = birthday_finder(individuals, check['ID'])
+                    childid = check['ID']
+            length = len(names)
+            for i in range(length):
+                if(childfirstname == names[i] and childbirthday == birthdays[i]):
+                    valid = False
+                    print("Error US25: Child with ID " + childid + " shares a first name and birthday with one or more of their siblings.")
+            names.append(childfirstname)
+            birthdays.append(childbirthday)
+    return valid
+
 #user story 22: unique id's
 
 #checking for unique individual ids
@@ -456,41 +612,41 @@ def livingmarried(filename):
                                        
   
 # convert date string to date type
-def string_to_date(string):
-    if string is None:
-        return None
-    temp = string.split(" ", 2)
-    day = int(temp[0])
-    year = int(temp[2])
-    month = 0
-    if(temp[1] == 'JAN'):
-        month = 1
-    if(temp[1] == 'FEB'):
-        month = 2
-    if(temp[1] == 'MAR'):
-        month = 3
-    if(temp[1] == 'APR'):
-        month = 4
-    if(temp[1] == 'MAY'):
-        month = 5
-    if(temp[1] == 'JUN'):
-        month = 6
-    if(temp[1] == 'JUL'):
-        month = 7
-    if(temp[1] == 'AUG'):
-        month = 8
-    if(temp[1] == 'SEP'):
-        month = 9
-    if(temp[1] == 'OCT'):
-        month = 10
-    if(temp[1] == 'NOV'):
-        month = 11
-    if(temp[1] == 'DEC'):
-        month = 12
-    if(date_helper(day,temp[1])):
-        return date(year, month, day)
-    else:
-        return None
+# def string_to_date(string):
+#     if string is None:
+#         return None
+#     temp = string.split(" ", 2)
+#     day = int(temp[0])
+#     year = int(temp[2])
+#     month = 0
+#     if(temp[1] == 'JAN'):
+#         month = 1
+#     if(temp[1] == 'FEB'):
+#         month = 2
+#     if(temp[1] == 'MAR'):
+#         month = 3
+#     if(temp[1] == 'APR'):
+#         month = 4
+#     if(temp[1] == 'MAY'):
+#         month = 5
+#     if(temp[1] == 'JUN'):
+#         month = 6
+#     if(temp[1] == 'JUL'):
+#         month = 7
+#     if(temp[1] == 'AUG'):
+#         month = 8
+#     if(temp[1] == 'SEP'):
+#         month = 9
+#     if(temp[1] == 'OCT'):
+#         month = 10
+#     if(temp[1] == 'NOV'):
+#         month = 11
+#     if(temp[1] == 'DEC'):
+#         month = 12
+#     if(date_helper(day,temp[1])):
+#         return date(year, month, day)
+#     else:
+#         return None
 
 # returns the diffence between 2 date strings
 # in terms of months
@@ -561,8 +717,63 @@ def get_age(person):
         age = int((death - birthday).days / 365)
         return age
 
+#user story 29, list deceased
+def list_deceased(filename):
+    data = organize(filename)
+    individuals = data[0]
+    temp = True
+    for person in individuals:
+        if(person['alive'] == False):
+            print("US 29: " + person['name'] + " is deceased.")
+            temp = False
+    return temp
+
+#user story 01, dates after current date
+def dates_after_current(filename):
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    temp = True
+    current_date = date.today()
+    for person in individuals:
+        birth = string_to_date(person['birthday'])
+        death = string_to_date(person['death'])
+        if(birth is not None):
+            if(birth > current_date):
+                temp = False
+                print("Anomoly US01: " + person['name'] + " has a birthday after today's date.")
+        if(death is not None):
+            if(death > current_date):
+                temp = False
+                print("Anomoly US01: " + person['name'] + " has a death date after today's date.")
+
+    for family in families:
+        marriage = string_to_date(family['married'])
+        divorced = string_to_date(family['divorced'])
+        if(marriage is not None):
+            if(marriage > current_date):
+                temp = False
+                print("Anomoly US01: " + family['ID'] + " has a marriage date after today's date.")
+
+        if(divorced is not None):
+            if(divorced > current_date):
+                temp = False
+                print("Anomoly US01: " + family['ID'] + " has a divorce date after today's date.")
+
+    return temp
+# user story 35
+def recent_births(data):
+    individuals = data[0]
+    recentBirths = []
+    for indiv in  individuals:
+        birthday = string_to_date(birthday_finder(individuals , indiv['ID']))
+        if((date.today() - birthday).days <= 30):
+            recentBirths.append(indiv)
+    return(recentBirths)
+
 def main():
     #getting data from the file given from command line
+
     fname = sys.argv[1]
     data = organize(fname)
     individuals = data[0]
@@ -572,6 +783,13 @@ def main():
     printIndividuals(individuals, families)
     printFamilies(individuals, families)
 
+    
+    recent_birth = recent_births(data)
+    if(len(recent_birth) > 0):
+        print("\nRecent Births in the last 30 days:")
+        printIndividuals(recent_birth, families)
+    else:
+        print("\nNo Recent Births in the last 30 days:")
     #does the checking from the user stories
 
     #user story 09
@@ -605,6 +823,31 @@ def main():
     if(livingmarried(fname) == True):
         print("Correct US30: List living married people")
 
+
+    #user story 06
+    if(divorce_before_death(fname) == True):
+        print("Correct US06: All divorces occur before individual deaths.")
+
+    #user story 10
+    if(marriage_after_14(fname) == True):
+        print("Correct US10: All marriages occur after individuals turn 14.")
+    #khushi user story 16
+    if(male_lastname(fname) == True):
+        print("Correct US16: All male names are the same")
+
+    #khushi user story 18
+    if(sibs_nomarry(fname) == True):
+        print("Correct US18: No siblings are married to each other")
+
+    #user story 25
+    if(unique_firstnames_in_fam(fname) == True):
+        print("Correct US25: All siblings have unique name and birthday combinations.")
+
+    if(list_deceased(fname) == True):
+        print("US 29: No deceased in this family tree.")
+
+    if(dates_after_current(fname) == True):
+        print("US 01: All dates are before current date")
 
     return 
 
