@@ -388,7 +388,72 @@ def sibs_nomarry(filename):
                 val= False
     return val 
 
+#User Story 12: Parents not too old
+def parents_notold(filename):
+    val=True
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    for fam in families:
+        dad_id= fam['hid']
+        mom_id= fam['wid']
+        children= fam['children']
+        #get ages of mother and father
+        for dates in individuals:
+            if(dad_id==dates['ID']):
+                ddate=dates['birthday']
+                ddate= ddate.split(" ")
+                dday= ddate[0]
+                dmonth= ddate[1]
+                dyear= ddate[2]
+            if(mom_id==dates['ID']):
+                mdate=dates['birthday']
+                mdate= mdate.split(" ")
+                mday= mdate[0]
+                mmonth= mdate[1]
+                myear= mdate[2]
+        for child in children:
+            for check in individuals:
+                if(child==check['ID']):
+                    cdate=check['birthday']
+                    cdate= cdate.split(" ")
+                    cday= cdate[0]
+                    cmonth= cdate[1]
+                    cyear= cdate[2]
+            if(int(dyear)-int(cyear)>80 or int(myear)-int(cyear)>60):
+                val=False
+    return val
 
+#User Story 30: List living married people   
+def livingmarried(filename):
+    val=True
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    name_list= []
+    for fam in families:
+        dad_id= fam['hid']
+        mom_id= fam['wid']
+        for check in individuals:
+            if(dad_id==check['ID']):
+                if(check['alive']==True):
+                    dname=check['name']
+                    dname=dname.split("/")
+                    dfirst=dname[0]
+                    dlast=dname[1]
+                    name_list.append(dfirst+" "+dlast)
+            if(mom_id==check['ID']):
+                if(check['alive']==True):
+                    mname=check['name']
+                    mname=mname.split("/")
+                    mfirst=mname[0]
+                    mlast=mname[1]
+                    name_list.append(mfirst+" "+mlast)
+    for each in name_list:
+        print(each)
+    return val
+                                       
+  
 def main():
     #getting data from the file given from command line
     fname = sys.argv[1]
@@ -420,6 +485,13 @@ def main():
     #khushi user story 18
     if(sibs_nomarry(fname) == True):
         print("Correct US18: No siblings are married to each other")
+    
+    if(parents_notold(fname) == True):
+        print("Correct US12: Mother should be less than 60 years older than her children and father should be less than 80 years older than his children")
+
+    if(livingmarried(fname) == True):
+        print("Correct US30: List living married people")
+
 
     return 
 
