@@ -1,0 +1,26 @@
+python -m unittest project_test.py
+..Error US16: the males in the family @F2@ do not all have the same last name.
+...US 29: Reign /Disick/ is deceased.
+US 29: Robert /Kardashian/ is deceased.
+US 29: John /Doe/ is deceased.
+.Scott  Disick
+Kourtney  Kardashian
+Kris  Jenner
+Kris  Jenner
+Caitlyn  Jenner
+Kim  Kardashian
+Kanye  West
+Khloe  Kardashian
+Tristan  Thompson
+Rob  Kardashian
+Blac  Chyna
+Kylie  Jenner
+Travis  Scott
+Jake  Naeher
+John  Doe 2.0
+Jake  Naeher
+....
+----------------------------------------------------------------------
+Ran 10 tests in 0.056s
+
+OK
