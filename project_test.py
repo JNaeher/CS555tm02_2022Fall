@@ -42,3 +42,11 @@ class TestUS36(unittest.TestCase):
     def test_recent_deaths(self):
         data = organize('test_file.ged')
         self.assertEqual(recent_births_and_deaths(data)[1], [{'ID': '@I5@','age': 8,'alive': False,'birthday': '14 DEC 2014','child': '@F1@','death': '27 FEB 2023','gender': 'F','name': 'Reign /Disick/','spouse': None}])
+
+class TestUS23(unittest.TestCase):
+    def test_unique_name_id(self):
+        self.assertEqual(unique_name_id('test_file.ged'), True)
+
+class TestUS25(unittest.TestCase):
+    def test_unique_firstame_in_fam(self):
+        self.assertEqual(unique_firstnames_in_fam('test_file.ged'), True)
