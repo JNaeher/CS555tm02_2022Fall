@@ -615,44 +615,6 @@ def livingmarried(filename):
     for each in name_list:
         print(each)
     return val
-                                       
-  
-# convert date string to date type
-# def string_to_date(string):
-#     if string is None:
-#         return None
-#     temp = string.split(" ", 2)
-#     day = int(temp[0])
-#     year = int(temp[2])
-#     month = 0
-#     if(temp[1] == 'JAN'):
-#         month = 1
-#     if(temp[1] == 'FEB'):
-#         month = 2
-#     if(temp[1] == 'MAR'):
-#         month = 3
-#     if(temp[1] == 'APR'):
-#         month = 4
-#     if(temp[1] == 'MAY'):
-#         month = 5
-#     if(temp[1] == 'JUN'):
-#         month = 6
-#     if(temp[1] == 'JUL'):
-#         month = 7
-#     if(temp[1] == 'AUG'):
-#         month = 8
-#     if(temp[1] == 'SEP'):
-#         month = 9
-#     if(temp[1] == 'OCT'):
-#         month = 10
-#     if(temp[1] == 'NOV'):
-#         month = 11
-#     if(temp[1] == 'DEC'):
-#         month = 12
-#     if(date_helper(day,temp[1])):
-#         return date(year, month, day)
-#     else:
-#         return None
 
 # returns the diffence between 2 date strings
 # in terms of months
@@ -767,13 +729,14 @@ def dates_after_current(filename):
                 print("Anomoly US01: " + family['ID'] + " has a divorce date after today's date.")
 
     return temp
+
 # user story 35
 def recent_births(data):
     individuals = data[0]
     recentBirths = []
     for indiv in  individuals:
         birthday = string_to_date(birthday_finder(individuals , indiv['ID']))
-        if((date.today() - birthday).days <= 30):
+        if(birthday != None and (date.today() - birthday).days <= 30):
             recentBirths.append(indiv)
     return(recentBirths)
 
@@ -799,7 +762,7 @@ def main():
     printIndividuals(individuals, families)
     printFamilies(individuals, families)
 
-    
+    #user story 35
     recent_birth = recent_births(data)
     if(len(recent_birth) > 0):
         print("\nRecent Births in the last 30 days:")
@@ -807,6 +770,7 @@ def main():
     else:
         print("\nNo Recent Births in the last 30 days:")
     
+    #user story 36
     recent_death = recent_deaths(data)
     if(len(recent_death) > 0):
         print("\nRecent Deaths in the last 30 days:")
