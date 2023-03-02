@@ -285,6 +285,12 @@ def birthday_finder(individuals,id):
     for individual in individuals:
         if(individual['ID'] == id):
             return individual['birthday']
+        
+#given an id, return the deathday associated with it
+def deathday_finder(individuals,id):
+    for individual in individuals:
+        if(individual['ID'] == id):
+            return individual['death']
 
 #check if marriage occurs before either individual turns 14 years old
 def marriage_after_14(filename):
@@ -771,6 +777,16 @@ def recent_births(data):
             recentBirths.append(indiv)
     return(recentBirths)
 
+# user story 36
+def recent_deaths(data):
+    individuals = data[0]
+    recentDeaths = []
+    for indiv in  individuals:
+        deathday = string_to_date(deathday_finder(individuals , indiv['ID']))
+        if(deathday != None and (date.today() - deathday).days <= 30):
+            recentDeaths.append(indiv)
+    return(recentDeaths)
+
 def main():
     #getting data from the file given from command line
 
@@ -790,6 +806,14 @@ def main():
         printIndividuals(recent_birth, families)
     else:
         print("\nNo Recent Births in the last 30 days:")
+    
+    recent_death = recent_deaths(data)
+    if(len(recent_death) > 0):
+        print("\nRecent Deaths in the last 30 days:")
+        printIndividuals(recent_death, families)
+    else:
+        print("\nNo Recent Deaths in the last 30 days:")
+    
     #does the checking from the user stories
 
     #user story 09
