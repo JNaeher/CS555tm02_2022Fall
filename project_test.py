@@ -32,3 +32,13 @@ class TestUS12(unittest.TestCase):
 class TestUS30(unittest.TestCase):
     def test_livingmarried(self):
         self.assertEqual(livingmarried('test_file.ged'), True)
+
+class TestUS35(unittest.TestCase):
+    def test_recent_births(self):
+        data = organize('test_file.ged')
+        self.assertEqual(recent_births_and_deaths(data)[0], [{'ID': '@I24@','age': 0,'alive': True,'birthday': '27 FEB 2023','child': '@F7@','death': None,'gender': 'F','name': 'Stormi /Webster/','spouse': None}])
+
+class TestUS36(unittest.TestCase):
+    def test_recent_deaths(self):
+        data = organize('test_file.ged')
+        self.assertEqual(recent_births_and_deaths(data)[1], [{'ID': '@I5@','age': 8,'alive': False,'birthday': '14 DEC 2014','child': '@F1@','death': '27 FEB 2023','gender': 'F','name': 'Reign /Disick/','spouse': None}])

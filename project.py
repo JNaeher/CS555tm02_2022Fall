@@ -730,25 +730,20 @@ def dates_after_current(filename):
 
     return temp
 
-# user story 35
-def recent_births(data):
+# BAD SMELL CODE DUPLICATE CODE FOR USER STORY 35 and 36
+# user story 35 and 36
+def recent_births_and_deaths(data):
     individuals = data[0]
     recentBirths = []
+    recentDeaths = []
     for indiv in  individuals:
         birthday = string_to_date(birthday_finder(individuals , indiv['ID']))
         if(birthday != None and (date.today() - birthday).days <= 30):
             recentBirths.append(indiv)
-    return(recentBirths)
-
-# user story 36
-def recent_deaths(data):
-    individuals = data[0]
-    recentDeaths = []
-    for indiv in  individuals:
         deathday = string_to_date(deathday_finder(individuals , indiv['ID']))
         if(deathday != None and (date.today() - deathday).days <= 30):
             recentDeaths.append(indiv)
-    return(recentDeaths)
+    return([recentBirths,recentDeaths])
 
 def main():
     #getting data from the file given from command line
@@ -763,18 +758,17 @@ def main():
     printFamilies(individuals, families)
 
     #user story 35
-    recent_birth = recent_births(data)
-    if(len(recent_birth) > 0):
+    recent_birth__and_death = recent_births_and_deaths(data)
+    if(len(recent_birth__and_death[0]) > 0):
         print("\nRecent Births in the last 30 days:")
-        printIndividuals(recent_birth, families)
+        printIndividuals(recent_birth__and_death[0], families)
     else:
         print("\nNo Recent Births in the last 30 days:")
     
     #user story 36
-    recent_death = recent_deaths(data)
-    if(len(recent_death) > 0):
+    if(len(recent_birth__and_death[1]) > 0):
         print("\nRecent Deaths in the last 30 days:")
-        printIndividuals(recent_death, families)
+        printIndividuals(recent_birth__and_death[1], families)
     else:
         print("\nNo Recent Deaths in the last 30 days:")
     
