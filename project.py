@@ -371,6 +371,7 @@ def unique_name_id(filename):
                 print("Error US23: Individual with ID " + individual['ID'] + " shares a name and birthday with one or more individuals.")
         names.append(indiv_name)
         birthdays.append(indiv_bday)
+    return valid
 
 #user story 22: unique id's
 
