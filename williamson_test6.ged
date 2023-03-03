@@ -1,0 +1,57 @@
+0 HEAD
+1 SOUR Family Echo
+2 WWW http://www.familyecho.com/
+1 FILE Family 6
+1 DATE 23 FEB 2023
+1 DEST ANSTFILE
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINEAGE-LINKED
+1 SUBM @I1@
+2 NAME makenarey@gmail.com
+1 SUBN
+1 CHAR UTF-8
+0 @I1@ INDI
+1 NAME Makena /Williamson/
+2 GIVN Makena
+2 SURN Williamson
+2 _MARNM Williamson
+1 SEX F
+1 BIRT
+2 DATE 1 JAN 2000
+1 FAMC @F1@
+0 @I2@ INDI
+1 NAME Rita /Reyes-Williamson/
+2 GIVN Rita
+2 SURN Reyes-Williamson
+2 _MARNM Reyes-Williamson
+1 SEX F
+1 BIRT
+2 DATE 1 JAN 1971
+1 FAMS @F1@
+0 @I3@ INDI
+1 NAME Jeff /Williamson/
+2 GIVN Jeff
+2 SURN Williamson
+2 _MARNM Williamson
+1 SEX M
+1 BIRT
+2 DATE 1 JAN 1970
+1 FAMS @F1@
+0 @I4@ INDI
+1 NAME Makena /Williamson/
+2 GIVN Makena
+2 SURN Williamson
+2 _MARNM Williamson
+1 SEX F
+1 BIRT
+2 DATE 1 JAN 2000
+1 FAMC @F1@
+0 @F1@ FAM
+1 HUSB @I3@
+1 WIFE @I2@
+1 CHIL @I1@
+1 CHIL @I4@
+1 _CURRENT Y
+1 _PRIMARY Y
+0 TRLR
