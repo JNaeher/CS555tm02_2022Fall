@@ -787,6 +787,19 @@ def birth_before_marriage(filename):
             print("Anomoly US02: " + husband['name'] + " was born after they were married")
     return ret_val
 
+# user story 03
+def birth_before_death(filename):
+    data = organize(filename)
+    individuals = data[0]
+    ret_val = True
+    for person in individuals:
+        if person['alive'] == False:
+            birth = string_to_date(person['birthday'])
+            death = string_to_date(person['death'])
+            if(birth > death):
+                ret_val = False
+                print("Anomoly US03: " + person['name'] + " has a birthday after their death.")
+    return ret_val
 
 def main():
     #getting data from the file given from command line
@@ -882,6 +895,9 @@ def main():
     if(birth_before_marriage(fname) == True):
         print("US 02: All marriages occured after those married were born")
 
+    #user story 03
+    if(birth_before_death(fname) == True):
+        print("US03: All individuals have a birthday before their death")
     return 
 
 if __name__ == "__main__":
