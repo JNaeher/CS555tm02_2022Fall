@@ -763,6 +763,31 @@ def recent_births_and_deaths(data):
             recentDeaths.append(indiv)
     return([recentBirths,recentDeaths])
 
+# user story 02, birth before marriage
+def birth_before_marriage(filename):
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    ret_val = True
+    for fam in families:
+        wid = fam['wid']
+        hid = fam['hid']
+        mar_date = string_to_date(fam['married'])
+        if mar_date is None:
+            continue
+        wife = next(person for person in individuals if person['ID'] == wid)
+        husband = next(person for person in individuals if person['ID'] == hid)
+        wife_birth = string_to_date(wife['birthday'])
+        husb_birth = string_to_date(husband['birthday'])
+        if(wife_birth > mar_date):
+            ret_val = False
+            print("Anomoly US02: " + wife['name'] + " was born after they were married")
+        if(husb_birth > mar_date):
+            ret_val = False
+            print("Anomoly US02: " + husband['name'] + " was born after they were married")
+    return ret_val
+
+
 def main():
     #getting data from the file given from command line
 
@@ -852,6 +877,10 @@ def main():
 
     if(dates_after_current(fname) == True):
         print("US 01: All dates are before current date")
+
+    #user story 02
+    if(birth_before_marriage(fname) == True):
+        print("US 02: All marriages occured after those married were born")
 
     return 
 
