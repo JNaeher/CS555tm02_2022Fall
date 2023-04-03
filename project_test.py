@@ -1,42 +1,60 @@
 from project import *
 import unittest
 
-class TestUniqueID(unittest.TestCase):
-    # naeher_test1 has unique ids for both individuals and families
-    # naeher_test2 has unique ids for both individuals and families
-    # naeher_test3 has duplicate ids for both inidividuals and families
-    def test_individual1(self):
-        self.assertEqual(unique_indiv_id('naeher_test1.ged'), True)
+class TestUS22(unittest.TestCase):
+    def test_individual(self):
+        self.assertEqual(unique_indiv_id('test_file.ged'), True)
 
-    def test_individual2(self):
-        self.assertEqual(unique_indiv_id('naeher_test2.ged'), True)
-    
-    def test_individual3(self):
-        self.assertEqual(unique_indiv_id('naeher_test3.ged'), False)
+class TestUS42(unittest.TestCase):
+    def test_date(self):
+        self.assertEqual(date_checker('test_file.ged'), True)
 
-    def test_family1(self):
-        self.assertEqual(unique_family_id('naeher_test1.ged'), True)
+class TestUS29(unittest.TestCase):
+    def test_dead(self):
+        self.assertEqual(list_deceased('test_file.ged'), False)
 
-    def test_family2(self):
-        self.assertEqual(unique_family_id('naeher_test3.ged'), False)
+class TestUS01(unittest.TestCase):
+    def test_date(self):
+        self.assertEqual(dates_after_current('test_file.ged'), True)
 
-class TestIllegitimateDates(unittest.TestCase):
-    # naeher_test1 has legitimate dates
-    # naeher_test3 has an illegitimate death date
-    # naeher_test4 has an illegitimate birth date
-    # naeher_test5 has an illegitimate marriage date
-    # naeher_test6 has an illegitimate divorce date
-    def test_date1(self):
-        self.assertEqual(date_checker('naeher_test1.ged'), True)
+class TestUS16(unittest.TestCase):
+    def test_malelastnames(self):
+        self.assertEqual(male_lastname('test_file.ged'), False)
 
-    def test_date2(self):
-        self.assertEqual(date_checker('naeher_test3.ged'), False)
+class TestUS18(unittest.TestCase):
+    def test_sibs_nomarry(self):
+        self.assertEqual(sibs_nomarry('test_file.ged'), True)
 
-    def test_date3(self):
-        self.assertEqual(date_checker('naeher_test4.ged'), False)
+class TestUS12(unittest.TestCase):
+    def test_parents_notold(self):
+        self.assertEqual(parents_notold('test_file.ged'), True)
 
-    def test_date4(self):
-        self.assertEqual(date_checker('naeher_test5.ged'), False)
+class TestUS30(unittest.TestCase):
+    def test_livingmarried(self):
+        self.assertEqual(livingmarried('test_file.ged'), True)
 
-    def test_date5(self):
-        self.assertEqual(date_checker('naeher_test6.ged'), False)
+class TestUS35(unittest.TestCase):
+    def test_recent_births(self):
+        data = organize('test_file.ged')
+        self.assertEqual(recent_births_and_deaths(data)[0], [{'ID': '@I24@','age': 0,'alive': True,'birthday': '27 FEB 2023','child': '@F7@','death': None,'gender': 'F','name': 'Stormi /Webster/','spouse': None}])
+
+class TestUS36(unittest.TestCase):
+    def test_recent_deaths(self):
+        data = organize('test_file.ged')
+        self.assertEqual(recent_births_and_deaths(data)[1], [{'ID': '@I5@','age': 8,'alive': False,'birthday': '14 DEC 2014','child': '@F1@','death': '27 FEB 2023','gender': 'F','name': 'Reign /Disick/','spouse': None}])
+
+class TestUS23(unittest.TestCase):
+    def test_unique_name_id(self):
+        self.assertEqual(unique_name_id('test_file.ged'), True)
+
+class TestUS25(unittest.TestCase):
+    def test_unique_firstame_in_fam(self):
+        self.assertEqual(unique_firstnames_in_fam('test_file.ged'), True)
+
+class TestUS02(unittest.TestCase):
+    def test_birth_before_marriage(self):
+        self.assertEqual(birth_before_marriage('test_file.ged'), True)
+
+class TestUS03(unittest.TestCase):
+    def test_birth_before_death(self):
+        self.assertEqual(birth_before_death('test_file.ged'), True)
