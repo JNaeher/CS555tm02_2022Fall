@@ -420,6 +420,48 @@ def unique_family_id(filename):
                 print("Error US22: Family ID " + "(" + ids[x] + ") is a duplicate.")
                 
     return value
+
+# user story 7: less than 150 years old
+def less_than_150(filename):
+    valid = True
+    data = organize(filename)
+    individuals = data[0]
+    for indiv in individuals:
+        birthday = string_to_date(birthday_finder(individuals, indiv['ID']))
+        deathday = string_to_date(death_finder(individuals, indiv['ID']))
+        if(deathday != None):
+            difference = deathday - birthday
+            difference_in_years = (difference.days + difference.seconds/86400)/365.2425
+            if(difference_in_years >= 150):
+                valid = False
+                print("Error US07: Individual " + "(" + indiv['ID'] + ") died more than 150 years past their birth date.")
+    return valid
+
+def are_couple(families, id1, id2):
+    for family in families:
+        wid = family['wid']
+        hid = family['hid']
+        if ((wid == id1 and hid == id2) or (wid == id2 and hid == id1)):
+            return True
+    return False
+
+# user story 17: no marriage to descendants
+def no_marry_desc(filename):
+    valid = True
+    data = organize(filename)
+    families = data[1]
+    for family in families:
+        wid = family['wid']
+        hid = family['hid']
+        children = family['children']
+        for child in children:
+            if(are_couple(families, wid, child)):
+                valid = False
+                print("Error US17: Individual " + "(" + wid + ") married a descendant.")
+            elif(are_couple(families, hid, child)):
+                valid = False
+                print("Error US17: Individual " + "(" + hid + ") married a descendant.")
+    return valid
     
 # user story 42: reject illegitimate dates
 def date_helper(day, month):
@@ -830,9 +872,17 @@ def main():
     
     #does the checking from the user stories
 
+    #user story 07
+    if(less_than_150(fname) == True):
+        print("Correct US07: All dead individuals died less than 150 years after their birth date.")
+
     #user story 09
     if(valid_birth(data) == True):
         print("Correct US09: All Children born while parents where alive")
+
+    #user story 17
+    if(no_marry_desc(fname) == True):
+        print("Correct US17: No marriages occur between parents and descendants.")
 
     #user story 22
     if(unique_indiv_id(fname) == True):
