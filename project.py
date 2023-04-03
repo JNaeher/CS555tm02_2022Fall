@@ -285,6 +285,12 @@ def birthday_finder(individuals,id):
     for individual in individuals:
         if(individual['ID'] == id):
             return individual['birthday']
+        
+#given an id, return the deathday associated with it
+def deathday_finder(individuals,id):
+    for individual in individuals:
+        if(individual['ID'] == id):
+            return individual['death']
 
 #check if marriage occurs before either individual turns 14 years old
 def marriage_after_14(filename):
@@ -365,6 +371,7 @@ def unique_name_id(filename):
                 print("Error US23: Individual with ID " + individual['ID'] + " shares a name and birthday with one or more individuals.")
         names.append(indiv_name)
         birthdays.append(indiv_bday)
+    return valid
 
 #user story 22: unique id's
 
@@ -562,43 +569,70 @@ def sibs_nomarry(filename):
                 val= False
     return val 
 
+#User Story 12: Parents not too old
+def parents_notold(filename):
+    val=True
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    for fam in families:
+        dad_id= fam['hid']
+        mom_id= fam['wid']
+        children= fam['children']
+        #get ages of mother and father
+        for dates in individuals:
+            if(dad_id==dates['ID']):
+                ddate=dates['birthday']
+                ddate= ddate.split(" ")
+                dday= ddate[0]
+                dmonth= ddate[1]
+                dyear= ddate[2]
+            if(mom_id==dates['ID']):
+                mdate=dates['birthday']
+                mdate= mdate.split(" ")
+                mday= mdate[0]
+                mmonth= mdate[1]
+                myear= mdate[2]
+        for child in children:
+            for check in individuals:
+                if(child==check['ID']):
+                    cdate=check['birthday']
+                    cdate= cdate.split(" ")
+                    cday= cdate[0]
+                    cmonth= cdate[1]
+                    cyear= cdate[2]
+            if(int(dyear)-int(cyear)>80 or int(myear)-int(cyear)>60):
+                val=False
+    return val
 
-# convert date string to date type
-def string_to_date(string):
-    if string is None:
-        return None
-    temp = string.split(" ", 2)
-    day = int(temp[0])
-    year = int(temp[2])
-    month = 0
-    if(temp[1] == 'JAN'):
-        month = 1
-    if(temp[1] == 'FEB'):
-        month = 2
-    if(temp[1] == 'MAR'):
-        month = 3
-    if(temp[1] == 'APR'):
-        month = 4
-    if(temp[1] == 'MAY'):
-        month = 5
-    if(temp[1] == 'JUN'):
-        month = 6
-    if(temp[1] == 'JUL'):
-        month = 7
-    if(temp[1] == 'AUG'):
-        month = 8
-    if(temp[1] == 'SEP'):
-        month = 9
-    if(temp[1] == 'OCT'):
-        month = 10
-    if(temp[1] == 'NOV'):
-        month = 11
-    if(temp[1] == 'DEC'):
-        month = 12
-    if(date_helper(day,temp[1])):
-        return date(year, month, day)
-    else:
-        return None
+#User Story 30: List living married people   
+def livingmarried(filename):
+    val=True
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    name_list= []
+    for fam in families:
+        dad_id= fam['hid']
+        mom_id= fam['wid']
+        for check in individuals:
+            if(dad_id==check['ID']):
+                if(check['alive']==True):
+                    dname=check['name']
+                    dname=dname.split("/")
+                    dfirst=dname[0]
+                    dlast=dname[1]
+                    name_list.append(dfirst+" "+dlast)
+            if(mom_id==check['ID']):
+                if(check['alive']==True):
+                    mname=check['name']
+                    mname=mname.split("/")
+                    mfirst=mname[0]
+                    mlast=mname[1]
+                    name_list.append(mfirst+" "+mlast)
+    for each in name_list:
+        print(each)
+    return val
 
 # returns the diffence between 2 date strings
 # in terms of months
@@ -669,8 +703,69 @@ def get_age(person):
         age = int((death - birthday).days / 365)
         return age
 
+#user story 29, list deceased
+def list_deceased(filename):
+    data = organize(filename)
+    individuals = data[0]
+    temp = True
+    for person in individuals:
+        if(person['alive'] == False):
+            print("US 29: " + person['name'] + " is deceased.")
+            temp = False
+    return temp
+
+#user story 01, dates after current date
+def dates_after_current(filename):
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    temp = True
+    current_date = date.today()
+    for person in individuals:
+        birth = string_to_date(person['birthday'])
+        death = string_to_date(person['death'])
+        if(birth is not None):
+            if(birth > current_date):
+                temp = False
+                print("Anomoly US01: " + person['name'] + " has a birthday after today's date.")
+        if(death is not None):
+            if(death > current_date):
+                temp = False
+                print("Anomoly US01: " + person['name'] + " has a death date after today's date.")
+
+    for family in families:
+        marriage = string_to_date(family['married'])
+        divorced = string_to_date(family['divorced'])
+        if(marriage is not None):
+            if(marriage > current_date):
+                temp = False
+                print("Anomoly US01: " + family['ID'] + " has a marriage date after today's date.")
+
+        if(divorced is not None):
+            if(divorced > current_date):
+                temp = False
+                print("Anomoly US01: " + family['ID'] + " has a divorce date after today's date.")
+
+    return temp
+
+# BAD SMELL CODE DUPLICATE CODE FOR USER STORY 35 and 36
+# user story 35 and 36
+def recent_births_and_deaths(data):
+    individuals = data[0]
+    recentBirths = []
+    recentDeaths = []
+    for indiv in  individuals:
+        birthday = string_to_date(birthday_finder(individuals , indiv['ID']))
+        if(birthday != None and (date.today() - birthday).days <= 30):
+            recentBirths.append(indiv)
+        deathday = string_to_date(deathday_finder(individuals , indiv['ID']))
+        if(deathday != None and (date.today() - deathday).days <= 30):
+            recentDeaths.append(indiv)
+    return([recentBirths,recentDeaths])
+
 def main():
     #getting data from the file given from command line
+
     fname = sys.argv[1]
     data = organize(fname)
     individuals = data[0]
@@ -680,6 +775,21 @@ def main():
     printIndividuals(individuals, families)
     printFamilies(individuals, families)
 
+    #user story 35
+    recent_birth__and_death = recent_births_and_deaths(data)
+    if(len(recent_birth__and_death[0]) > 0):
+        print("\nRecent Births in the last 30 days:")
+        printIndividuals(recent_birth__and_death[0], families)
+    else:
+        print("\nNo Recent Births in the last 30 days:")
+    
+    #user story 36
+    if(len(recent_birth__and_death[1]) > 0):
+        print("\nRecent Deaths in the last 30 days:")
+        printIndividuals(recent_birth__and_death[1], families)
+    else:
+        print("\nNo Recent Deaths in the last 30 days:")
+    
     #does the checking from the user stories
 
     #user story 09
@@ -697,13 +807,22 @@ def main():
     if(date_checker(fname) == True):
         print("Correct US42: All dates are legitimate")
 
-    #khushi user story 16
+    #khushi's user story 16
     if(male_lastname(fname) == True):
         print("Correct US16: All male names are the same")
 
-    #khushi user story 18
+    #khushi's user story 18
     if(sibs_nomarry(fname) == True):
         print("Correct US18: No siblings are married to each other")
+    
+    #khushi's user story 12
+    if(parents_notold(fname) == True):
+        print("Correct US12: Mother should be less than 60 years older than her children and father should be less than 80 years older than his children")
+
+    #khushi's user story 30
+    if(livingmarried(fname) == True):
+        print("Correct US30: List living married people")
+
 
     #user story 06
     if(divorce_before_death(fname) == True):
@@ -712,6 +831,13 @@ def main():
     #user story 10
     if(marriage_after_14(fname) == True):
         print("Correct US10: All marriages occur after individuals turn 14.")
+    #khushi user story 16
+    if(male_lastname(fname) == True):
+        print("Correct US16: All male names are the same")
+
+    #khushi user story 18
+    if(sibs_nomarry(fname) == True):
+        print("Correct US18: No siblings are married to each other")
 
     #user story 23
     if(unique_name_id(fname) == True):
@@ -720,6 +846,12 @@ def main():
     #user story 25
     if(unique_firstnames_in_fam(fname) == True):
         print("Correct US25: All siblings have unique name and birthday combinations.")
+
+    if(list_deceased(fname) == True):
+        print("US 29: No deceased in this family tree.")
+
+    if(dates_after_current(fname) == True):
+        print("US 01: All dates are before current date")
 
     return 
 
