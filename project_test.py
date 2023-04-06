@@ -50,3 +50,11 @@ class TestUS23(unittest.TestCase):
 class TestUS25(unittest.TestCase):
     def test_unique_firstame_in_fam(self):
         self.assertEqual(unique_firstnames_in_fam('test_file.ged'), True)
+
+class TestUS07(unittest.TestCase):
+    def test_less_than_150(self):
+        self.assertEqual(less_than_150('US07_failtest_file.ged'), False)
+
+class TestUS17(unittest.TestCase):
+    def test_no_marry_desc(self):
+        self.assertEqual(no_marry_desc('US17_failtest_file.ged'), False) 
