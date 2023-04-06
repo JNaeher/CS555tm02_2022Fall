@@ -805,8 +805,9 @@ def recent_births_and_deaths(data):
             recentDeaths.append(indiv)
     return([recentBirths,recentDeaths])
 
-# user story 02, birth before marriage
-def birth_before_marriage(filename):
+#User Story 21: Correct gender for role
+def genderroles(filename):
+    val=True
     data = organize(filename)
     individuals = data[0]
     families = data[1]
@@ -915,7 +916,7 @@ def main():
     if(fewerthan(fname) == True):
         print("Correct US15: Each family has fewer than 15 siblings")
 
-    #khushi's user story 21
+    #khushi's user story 21 sprint 3
     if(genderroles(fname) == True):
         print("Correct US21: Each family has correct gender roles for the Husband and Wife")
 
