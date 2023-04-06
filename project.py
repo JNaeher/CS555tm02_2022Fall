@@ -463,48 +463,6 @@ def no_marry_desc(filename):
                 print("Error US17: Individual " + "(" + hid + ") married a descendant.")
     return valid
     
-# user story 7: less than 150 years old
-def less_than_150(filename):
-    valid = True
-    data = organize(filename)
-    individuals = data[0]
-    for indiv in individuals:
-        birthday = string_to_date(birthday_finder(individuals, indiv['ID']))
-        deathday = string_to_date(death_finder(individuals, indiv['ID']))
-        if(deathday != None):
-            difference = deathday - birthday
-            difference_in_years = (difference.days + difference.seconds/86400)/365.2425
-            if(difference_in_years >= 150):
-                valid = False
-                print("Error US07: Individual " + "(" + indiv['ID'] + ") died more than 150 years past their birth date.")
-    return valid
-
-def are_couple(families, id1, id2):
-    for family in families:
-        wid = family['wid']
-        hid = family['hid']
-        if ((wid == id1 and hid == id2) or (wid == id2 and hid == id1)):
-            return True
-    return False
-
-# user story 17: no marriage to descendants
-def no_marry_desc(filename):
-    valid = True
-    data = organize(filename)
-    families = data[1]
-    for family in families:
-        wid = family['wid']
-        hid = family['hid']
-        children = family['children']
-        for child in children:
-            if(are_couple(families, wid, child)):
-                valid = False
-                print("Error US17: Individual " + "(" + wid + ") married a descendant.")
-            elif(are_couple(families, hid, child)):
-                valid = False
-                print("Error US17: Individual " + "(" + hid + ") married a descendant.")
-    return valid
-    
 # user story 42: reject illegitimate dates
 def date_helper(day, month):
     day = int(day)
@@ -718,42 +676,172 @@ def livingmarried(filename):
         print(each)
     return val
 
-#User Story 15: Fewer than 15 siblings
-def fewerthan(filename):
-    val=True
+# returns the diffence between 2 date strings
+# in terms of months
+def find_month_differance(start, end):
+    dateStart = string_to_date(start)
+    dateEnd = string_to_date(end)
+    if dateStart == None or dateEnd == None:
+        return None
+    return (dateStart - dateEnd).days / 30.417
+
+# user story 09: Birth Before Death of Parents
+# check if birth's happen before death of the mother 
+# and 9 months before the death of the father
+def valid_birth(data):
+    individuals = data[0]
+    families = data[1]
+    validBirthdays = True
+    for fam in families:
+        if(len(fam['children']) > 0):
+            hid = fam['hid']
+            wid = fam['wid']
+            children = []
+            for person in individuals:
+                if person['ID'] == hid:
+                    hus = person
+                if person['ID'] == wid:
+                    wif = person
+                for child in fam['children']:
+                    if person['ID'] == child:
+                        children.append(person)
+            if (wif['death'] != None or hus['death'] != None):
+                for child in children:
+                    if (wif['death'] != None):
+                        monthDif = find_month_differance(child['birthday'],wif['death'])
+                        if(monthDif == None):
+                            validBirthdays = False
+                            print("Error US09: Invalid Data")
+                        elif(monthDif > 0):
+                            validBirthdays = False
+                            print('Error US09: ' + wif['name'] + "'s Death is before " + child['name'] + "'s Birth")
+                    if (hus['death'] != None):
+                        monthDif = find_month_differance(child['birthday'],hus['death'])
+                        if(monthDif == None):
+                            validBirthdays = False
+                            print("Error US09: Invalid Data")
+                        elif(monthDif > 9):
+                            validBirthdays = False
+                            print('Anomaly US09: ' + hus['name'] + "'s Death is more than 9 months before " + child['name'] + "'s Birth")
+    return(validBirthdays)
+
+# user story 27 get persons age
+def get_age(person):
+    if(person['birthday'] == None):
+        return -1
+    elif(person['death'] == None):
+        birthday = string_to_date(person['birthday'])
+        if(birthday == None):
+            return -1
+        age = int((date.today() - birthday).days / 365)
+        return age
+    else:
+        birthday = string_to_date(person['birthday'])
+        if(birthday == None):
+            return -1
+        death = string_to_date(person['death'])
+        if(death == None):
+            return -1
+        age = int((death - birthday).days / 365)
+        return age
+
+#user story 29, list deceased
+def list_deceased(filename):
+    data = organize(filename)
+    individuals = data[0]
+    temp = True
+    for person in individuals:
+        if(person['alive'] == False):
+            print("US 29: " + person['name'] + " is deceased.")
+            temp = False
+    return temp
+
+#user story 01, dates after current date
+def dates_after_current(filename):
     data = organize(filename)
     individuals = data[0]
     families = data[1]
-    name_list= []
-    for fam in families:
-        children=fam['children']
-        numofchildren=len(children)
-        if(numofchildren>15):
-            print("Family "+fam['ID']+" has more than 15 siblings")
-            val=False
-    return val
+    temp = True
+    current_date = date.today()
+    for person in individuals:
+        birth = string_to_date(person['birthday'])
+        death = string_to_date(person['death'])
+        if(birth is not None):
+            if(birth > current_date):
+                temp = False
+                print("Anomoly US01: " + person['name'] + " has a birthday after today's date.")
+        if(death is not None):
+            if(death > current_date):
+                temp = False
+                print("Anomoly US01: " + person['name'] + " has a death date after today's date.")
 
-#User Story 21: Correct gender for role
-def genderroles(filename):
-    val=True
+    for family in families:
+        marriage = string_to_date(family['married'])
+        divorced = string_to_date(family['divorced'])
+        if(marriage is not None):
+            if(marriage > current_date):
+                temp = False
+                print("Anomoly US01: " + family['ID'] + " has a marriage date after today's date.")
+
+        if(divorced is not None):
+            if(divorced > current_date):
+                temp = False
+                print("Anomoly US01: " + family['ID'] + " has a divorce date after today's date.")
+
+    return temp
+
+# BAD SMELL CODE DUPLICATE CODE FOR USER STORY 35 and 36
+# user story 35 and 36
+def recent_births_and_deaths(data):
+    individuals = data[0]
+    recentBirths = []
+    recentDeaths = []
+    for indiv in  individuals:
+        birthday = string_to_date(birthday_finder(individuals , indiv['ID']))
+        if(birthday != None and (date.today() - birthday).days <= 30):
+            recentBirths.append(indiv)
+        deathday = string_to_date(deathday_finder(individuals , indiv['ID']))
+        if(deathday != None and (date.today() - deathday).days <= 30):
+            recentDeaths.append(indiv)
+    return([recentBirths,recentDeaths])
+
+# user story 02, birth before marriage
+def birth_before_marriage(filename):
     data = organize(filename)
     individuals = data[0]
     families = data[1]
-    name_list= []
+    ret_val = True
     for fam in families:
-        dad_id= fam['hid']
-        mom_id= fam['wid']
-        for check in individuals:
-            if(dad_id==check['ID']):
-                if(check['gender']!='M'):
-                    print("Family "+fam['ID']+" has an incorrect gender role for the Husband")
-                    val=False
-            if(mom_id==check['ID']):
-                if(check['gender']!='F'):
-                    print("Family "+fam['ID']+" has an incorrect gender role for the Wife")
-                    val=False                
-    return val
+        wid = fam['wid']
+        hid = fam['hid']
+        mar_date = string_to_date(fam['married'])
+        if mar_date is None:
+            continue
+        wife = next(person for person in individuals if person['ID'] == wid)
+        husband = next(person for person in individuals if person['ID'] == hid)
+        wife_birth = string_to_date(wife['birthday'])
+        husb_birth = string_to_date(husband['birthday'])
+        if(wife_birth > mar_date):
+            ret_val = False
+            print("Anomoly US02: " + wife['name'] + " was born after they were married")
+        if(husb_birth > mar_date):
+            ret_val = False
+            print("Anomoly US02: " + husband['name'] + " was born after they were married")
+    return ret_val
 
+# user story 03
+def birth_before_death(filename):
+    data = organize(filename)
+    individuals = data[0]
+    ret_val = True
+    for person in individuals:
+        if person['alive'] == False:
+            birth = string_to_date(person['birthday'])
+            death = string_to_date(person['death'])
+            if(birth > death):
+                ret_val = False
+                print("Anomoly US03: " + person['name'] + " has a birthday after their death.")
+    return ret_val
 
 def main():
     #getting data from the file given from command line
@@ -823,13 +911,6 @@ def main():
     if(livingmarried(fname) == True):
         print("Correct US30: List living married people")
 
-    #khushi's user story 15
-    if(fewerthan(fname) == True):
-        print("Correct US15: Each family has fewer than 15 siblings")
-
-    #khushi's user story 21
-    if(genderroles(fname) == True):
-        print("Correct US21: Each family has correct gender roles for the Husband and Wife")
 
     #user story 06
     if(divorce_before_death(fname) == True):
