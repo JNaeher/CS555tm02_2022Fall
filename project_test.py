@@ -40,3 +40,12 @@ class TestIllegitimateDates(unittest.TestCase):
 
     def test_date5(self):
         self.assertEqual(date_checker('naeher_test6.ged'), False)
+
+class TestUS15(unittest.TestCase):
+    def test_fewerthan(self):
+        self.assertEqual(fewerthan('test_file.ged'), True) 
+
+class TestUS21(unittest.TestCase):
+    def test_genderroles(self):
+        self.assertEqual(genderroles('test_file.ged'), False) 
+
