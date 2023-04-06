@@ -51,6 +51,9 @@ class TestUS25(unittest.TestCase):
     def test_unique_firstame_in_fam(self):
         self.assertEqual(unique_firstnames_in_fam('test_file.ged'), True)
 
+class TestUS08(unittest.TestCase):
+    def test_birth_after_marriage(self):
+        self.assertEqual(birth_after_marriage('test_file.ged'), True)
 class TestUS02(unittest.TestCase):
     def test_birth_before_marriage(self):
         self.assertEqual(birth_before_marriage('test_file.ged'), True)

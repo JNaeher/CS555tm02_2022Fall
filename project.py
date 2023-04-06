@@ -355,6 +355,26 @@ def unique_firstnames_in_fam(filename):
             birthdays.append(childbirthday)
     return valid
 
+def birth_after_marriage(filename):
+    valid = True
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    for family in families:
+        marriage_date = string_to_date(family['married'])
+        children = family['children']
+        for child in children:
+            childbirthday = ''
+            childid = ''
+            for check in individuals:
+                if((child == check['ID'])):
+                    childbirthday = birthday_finder(individuals, check['ID'])
+                    childid = check['ID']
+        if(marriage_date > childbirthday):
+            valid = False
+            print("Error US08: Child with ID " + childid + " has a birthday before parent's marriage.")
+    return valid
+
 #user story 23: unique name and birth date
 def unique_name_id(filename):
     valid = True
