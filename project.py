@@ -530,11 +530,11 @@ def main():
     if(livingmarried(fname) == True):
         print("Correct US30: List living married people")
 
-    #khushi's user story 15
+    #khushi's user story 15 sprint 3
     if(fewerthan(fname) == True):
         print("Correct US15: Each family has fewer than 15 siblings")
 
-    #khushi's user story 21
+    #khushi's user story 21 sprint 3
     if(genderroles(fname) == True):
         print("Correct US21: Each family has correct gender roles for the Husband and Wife")
 
