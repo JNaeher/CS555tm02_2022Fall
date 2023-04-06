@@ -696,6 +696,20 @@ def livingmarried(filename):
         print(each)
     return val
 
+#User Story 15: Fewer than 15 siblings
+def fewerthan(filename):
+    fval=True
+    fdata = organize(filename)
+    individuals = fdata[0]
+    families = fdata[1]
+    name_list= []
+    for fam in families:
+        children=fam['children']
+        numofchildren=len(children)
+        if(numofchildren>15):
+            print("Family "+fam['ID']+" has more than 15 siblings")
+            fval=False
+    return fval
 # returns the diffence between 2 date strings
 # in terms of months
 def find_month_differance(start, end):
