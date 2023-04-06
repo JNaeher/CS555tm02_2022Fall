@@ -54,6 +54,11 @@ class TestUS25(unittest.TestCase):
 class TestUS08(unittest.TestCase):
     def test_birth_after_marriage(self):
         self.assertEqual(birth_after_marriage('test_file.ged'), True)
+
+class TestUS13(unittest.TestCase):
+    def test_sibling_spacing(self):
+        self.assertEqual(sibling_spacing('test_file.ged'), True)
+
 class TestUS02(unittest.TestCase):
     def test_birth_before_marriage(self):
         self.assertEqual(birth_before_marriage('test_file.ged'), True)
@@ -61,6 +66,7 @@ class TestUS02(unittest.TestCase):
 class TestUS03(unittest.TestCase):
     def test_birth_before_death(self):
         self.assertEqual(birth_before_death('test_file.ged'), True)
+
 class TestUS07(unittest.TestCase):
     def test_less_than_150(self):
         self.assertEqual(less_than_150('US07_failtest_file.ged'), False)
@@ -85,4 +91,3 @@ class TestUS15(unittest.TestCase):
 class TestUS21(unittest.TestCase):
     def test_genderroles(self):
         self.assertEqual(genderroles('test_file.ged'), False) 
-
