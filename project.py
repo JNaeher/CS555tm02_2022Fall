@@ -864,6 +864,44 @@ def birth_before_death(filename):
                 print("Anomoly US03: " + person['name'] + " has a birthday after their death.")
     return ret_val
 
+def get_individual(individuals, id):
+    for indiv in individuals:
+        if indiv['ID'] == id:
+            return indiv
+    return None
+
+# user story 31
+# List living single
+def single_and_over_30(data):
+    individuals = data[0]
+    single_indivis = []
+    for indiv in individuals:
+        if indiv['age'] > 30 and indiv['spouse'] == None:
+            single_indivis.append(indiv)
+    return single_indivis
+
+# user story 34
+# List large age differences
+def large_age_marriage_difference(data):
+    individuals = data[0]
+    families = data[1]
+    large_couples = []
+    for fam in families:
+        marriage_date = fam['married']
+        if marriage_date != None:
+            marriage = string_to_date(marriage_date)
+            hus = get_individual(individuals, fam['hid'])
+            wif = get_individual(individuals, fam['wid'])
+            hus_marriage_age = (marriage - string_to_date(hus['birthday'])).days / 365
+            wif_marriage_age = (marriage - string_to_date(wif['birthday'])).days / 365
+            if hus_marriage_age > wif_marriage_age :
+                if hus_marriage_age > 2 * wif_marriage_age :
+                    large_couples.append[fam]
+            else :
+                if 2 * hus_marriage_age < wif_marriage_age :
+                    large_couples.append[fam]
+    return large_couples
+
 def main():
     #getting data from the file given from command line
 
@@ -890,7 +928,23 @@ def main():
         printIndividuals(recent_birth__and_death[1], families)
     else:
         print("\nNo Recent Deaths in the last 30 days:")
-    
+
+    #user story 31
+    single_and_over_30_data = single_and_over_30(data)
+    if(len(single_and_over_30_data) > 0):
+        print("\nFamily Members who are over 30 and haven't been married: ")
+        printIndividuals(single_and_over_30_data, families)
+    else:
+        print("\nNo Family Members who are over 30 and haven't been married:")
+
+    #user story 34
+    double_marriage_age = large_age_marriage_difference(data)
+    if(len(double_marriage_age) > 0):
+        print("\nMarriages in which one couple is twice the age of the other: ")
+        printFamilies(individuals, single_and_over_30_data)
+    else:
+        print("\nNo Marriages in which one couple is twice the age of the other: ")
+
     #does the checking from the user stories
 
     #user story 07
@@ -911,6 +965,7 @@ def main():
     
     if(unique_family_id(fname) == True):
         print("Correct US22: All family IDs are unique.")
+    
 
     #user story 42
     if(date_checker(fname) == True):
@@ -944,6 +999,7 @@ def main():
     if(birth_before_death(fname) == True):
         print("US03: All individuals have a birthday before their death")
     return 
+
 
 if __name__ == "__main__":
     main()
