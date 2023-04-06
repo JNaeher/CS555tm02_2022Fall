@@ -68,3 +68,21 @@ class TestUS07(unittest.TestCase):
 class TestUS17(unittest.TestCase):
     def test_no_marry_desc(self):
         self.assertEqual(no_marry_desc('US17_failtest_file.ged'), False) 
+
+class TestUS15(unittest.TestCase):
+    def test_fewerthan(self):
+        self.assertEqual(fewerthan('test_file.ged'), True) 
+
+class TestUS21(unittest.TestCase):
+    def test_genderroles(self):
+        self.assertEqual(genderroles('test_file.ged'), False) 
+
+
+class TestUS15(unittest.TestCase):
+    def test_fewerthan(self):
+        self.assertEqual(fewerthan('test_file.ged'), True) 
+
+class TestUS21(unittest.TestCase):
+    def test_genderroles(self):
+        self.assertEqual(genderroles('test_file.ged'), False) 
+
