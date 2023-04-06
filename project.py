@@ -609,8 +609,44 @@ def livingmarried(filename):
     for each in name_list:
         print(each)
     return val
-                                       
-  
+
+#User Story 15: Fewer than 15 siblings
+def fewerthan(filename):
+    val=True
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    name_list= []
+    for fam in families:
+        children=fam['children']
+        numofchildren=len(children)
+        if(numofchildren>15):
+            print("Family "+fam['ID']+" has more than 15 siblings")
+            val=False
+    return val
+
+#User Story 21: Correct gender for role
+def genderroles(filename):
+    val=True
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    name_list= []
+    for fam in families:
+        dad_id= fam['hid']
+        mom_id= fam['wid']
+        for check in individuals:
+            if(dad_id==check['ID']):
+                if(check['gender']!='M'):
+                    print("Family "+fam['ID']+" has an incorrect gender role for the Husband")
+                    val=False
+            if(mom_id==check['ID']):
+                if(check['gender']!='F'):
+                    print("Family "+fam['ID']+" has an incorrect gender role for the Wife")
+                    val=False                
+    return val
+
+
 # convert date string to date type
 # def string_to_date(string):
 #     if string is None:
@@ -823,6 +859,13 @@ def main():
     if(livingmarried(fname) == True):
         print("Correct US30: List living married people")
 
+    #khushi's user story 15
+    if(fewerthan(fname) == True):
+        print("Correct US15: Each family has fewer than 15 siblings")
+
+    #khushi's user story 21
+    if(genderroles(fname) == True):
+        print("Correct US21: Each family has correct gender roles for the Husband and Wife")
 
     #user story 06
     if(divorce_before_death(fname) == True):
