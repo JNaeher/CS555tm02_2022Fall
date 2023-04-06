@@ -911,39 +911,13 @@ def main():
     if(livingmarried(fname) == True):
         print("Correct US30: List living married people")
 
+    #khushi's user story 15
+    if(fewerthan(fname) == True):
+        print("Correct US15: Each family has fewer than 15 siblings")
 
-    #user story 06
-    if(divorce_before_death(fname) == True):
-        print("Correct US06: All divorces occur before individual deaths.")
-
-    #user story 10
-    if(marriage_after_14(fname) == True):
-        print("Correct US10: All marriages occur after individuals turn 14.")
-    #khushi user story 16
-    if(male_lastname(fname) == True):
-        print("Correct US16: All male names are the same")
-
-    #khushi user story 18
-    if(sibs_nomarry(fname) == True):
-        print("Correct US18: No siblings are married to each other")
-
-    #user story 23
-    if(unique_name_id(fname) == True):
-        print("Correct US23: All individuals have unique name and birthday combinations.")
-
-    #user story 25
-    if(unique_firstnames_in_fam(fname) == True):
-        print("Correct US25: All siblings have unique name and birthday combinations.")
-
-    if(list_deceased(fname) == True):
-        print("US 29: No deceased in this family tree.")
-
-    if(dates_after_current(fname) == True):
-        print("US 01: All dates are before current date")
-
-    #user story 02
-    if(birth_before_marriage(fname) == True):
-        print("US 02: All marriages occured after those married were born")
+    #khushi's user story 21
+    if(genderroles(fname) == True):
+        print("Correct US21: Each family has correct gender roles for the Husband and Wife")
 
     #user story 03
     if(birth_before_death(fname) == True):
