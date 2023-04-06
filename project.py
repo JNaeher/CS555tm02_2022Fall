@@ -1,6 +1,7 @@
 from unittest import skip
 from prettytable import PrettyTable
 from datetime import date
+from dateutil import relativedelta
 import sys
 
 #reminder: output into a file
@@ -373,6 +374,27 @@ def birth_after_marriage(filename):
         if(marriage_date > childbirthday):
             valid = False
             print("Error US08: Child with ID " + childid + " has a birthday before parent's marriage.")
+    return valid
+
+def sibling_spacing(filename):
+    valid = True
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    for family in families:
+        birthdays = []
+        children = family['children']
+        for child in children:
+            for check in individuals:
+                if((child == check['ID'])):
+                    birthdays.append(string_to_date(birthday_finder(individuals, check['ID'])))
+        # iterate pairwise over birthdays
+        for i in range(0, len(birthdays) - 2):
+            delta = relativedelta.relativedelta(birthdays[i], birthdays[i+1])
+            if(abs(delta.months) <= 8 or (abs(delta.months) < 1 and abs(delta.days < 2))):
+                valid = False
+                print("Error US13: Children with IDs " + children[i] + " and " + children[i] + " have a birthday < 8 months apart and are not twins.")
+
     return valid
 
 #user story 23: unique name and birth date
