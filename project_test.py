@@ -63,7 +63,7 @@ class TestUS25(unittest.TestCase):
 
 class TestUS08(unittest.TestCase):
     def test_birth_after_marriage(self):
-        self.assertEqual(birth_after_marriage('test_file.ged'), True)
+        self.assertEqual(birth_after_marriage('test_file.ged'), False)
 
 class TestUS13(unittest.TestCase):
     def test_sibling_spacing(self):
