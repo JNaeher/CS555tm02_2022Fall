@@ -54,3 +54,17 @@ class TestUS25(unittest.TestCase):
 class TestUS08(unittest.TestCase):
     def test_birth_after_marriage(self):
         self.assertEqual(birth_after_marriage('test_file.ged'), True)
+class TestUS02(unittest.TestCase):
+    def test_birth_before_marriage(self):
+        self.assertEqual(birth_before_marriage('test_file.ged'), True)
+
+class TestUS03(unittest.TestCase):
+    def test_birth_before_death(self):
+        self.assertEqual(birth_before_death('test_file.ged'), True)
+class TestUS07(unittest.TestCase):
+    def test_less_than_150(self):
+        self.assertEqual(less_than_150('US07_failtest_file.ged'), False)
+
+class TestUS17(unittest.TestCase):
+    def test_no_marry_desc(self):
+        self.assertEqual(no_marry_desc('US17_failtest_file.ged'), False) 
