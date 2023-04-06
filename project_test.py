@@ -33,15 +33,25 @@ class TestUS30(unittest.TestCase):
     def test_livingmarried(self):
         self.assertEqual(livingmarried('test_file.ged'), True)
 
+class TestUS31(unittest.TestCase):
+    def test_single_and_over_30(self):
+        data = organize('test_file.ged')
+        self.assertEqual(single_and_over_30(data), [])
+
+class TestUS34(unittest.TestCase):
+    def double_age_marriage(self):
+        data = organize('test_file.ged')
+        self.assertEqual(large_age_marriage_difference(data), [])
+
 class TestUS35(unittest.TestCase):
     def test_recent_births(self):
         data = organize('test_file.ged')
-        self.assertEqual(recent_births_and_deaths(data)[0], [{'ID': '@I24@','age': 0,'alive': True,'birthday': '27 FEB 2023','child': '@F7@','death': None,'gender': 'F','name': 'Stormi /Webster/','spouse': None}])
+        self.assertEqual(recent_births_and_deaths(data)[0], [{'ID': '@I24@','age': 0,'alive': True,'birthday': '5 APR 2023','child': '@F7@','death': None,'gender': 'F','name': 'Stormi /Webster/','spouse': None}])
 
 class TestUS36(unittest.TestCase):
     def test_recent_deaths(self):
         data = organize('test_file.ged')
-        self.assertEqual(recent_births_and_deaths(data)[1], [{'ID': '@I5@','age': 8,'alive': False,'birthday': '14 DEC 2014','child': '@F1@','death': '27 FEB 2023','gender': 'F','name': 'Reign /Disick/','spouse': None}])
+        self.assertEqual(recent_births_and_deaths(data)[1], [{'ID': '@I5@','age': 8,'alive': False,'birthday': '14 DEC 2014','child': '@F1@','death': '5 APR 2023','gender': 'F','name': 'Reign /Disick/','spouse': None}])
 
 class TestUS23(unittest.TestCase):
     def test_unique_name_id(self):
