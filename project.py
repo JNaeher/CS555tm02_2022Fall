@@ -1062,6 +1062,10 @@ def main():
     if(genderroles(fname) == True):
         print("Correct US21: Each family has correct gender roles for the Husband and Wife")
 
+    #user story 02
+    if(birth_before_marriage(fname) == True):
+        print("US 02: All marriages occured after those married were born")
+
     #user story 03
     if(birth_before_death(fname) == True):
         print("US03: All individuals have a birthday before their death")
