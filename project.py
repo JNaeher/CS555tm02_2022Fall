@@ -702,6 +702,10 @@ def fewerthan(filename):
     fdata = organize(filename)
     individuals = fdata[0]
     families = fdata[1]
+    fval=True
+    fdata = organize(filename)
+    individuals = fdata[0]
+    families = fdata[1]
     name_list= []
     for fam in families:
         children=fam['children']
