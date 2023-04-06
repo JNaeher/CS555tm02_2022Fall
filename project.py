@@ -455,18 +455,18 @@ def livingmarried(filename):
 
 #User Story 15: Fewer than 15 siblings
 def fewerthan(filename):
-    val=True
-    data = organize(filename)
-    individuals = data[0]
-    families = data[1]
+    fval=True
+    fdata = organize(filename)
+    individuals = fdata[0]
+    families = fdata[1]
     name_list= []
     for fam in families:
         children=fam['children']
         numofchildren=len(children)
         if(numofchildren>15):
             print("Family "+fam['ID']+" has more than 15 siblings")
-            val=False
-    return val
+            fval=False
+    return fval
 
 #User Story 21: Correct gender for roles
 def genderroles(filename):
