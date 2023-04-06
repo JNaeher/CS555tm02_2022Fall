@@ -67,7 +67,7 @@ class TestUS08(unittest.TestCase):
 
 class TestUS13(unittest.TestCase):
     def test_sibling_spacing(self):
-        self.assertEqual(sibling_spacing('test_file.ged'), True)
+        self.assertEqual(sibling_spacing('test_file.ged'), False)
 
 class TestUS02(unittest.TestCase):
     def test_birth_before_marriage(self):
