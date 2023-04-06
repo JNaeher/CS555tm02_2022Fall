@@ -368,11 +368,11 @@ def birth_after_marriage(filename):
             childid = ''
             for check in individuals:
                 if((child == check['ID'])):
-                    childbirthday = birthday_finder(individuals, check['ID'])
+                    childbirthday = string_to_date(birthday_finder(individuals, check['ID']))
                     childid = check['ID']
-        if(marriage_date > childbirthday):
-            valid = False
-            print("Error US08: Child with ID " + childid + " has a birthday before parent's marriage.")
+            if(marriage_date != None and marriage_date > childbirthday):
+                valid = False
+                print("Error US08: Child with ID " + childid + " has a birthday before parent's marriage.")
     return valid
 
 #user story 23: unique name and birth date
