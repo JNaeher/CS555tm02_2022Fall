@@ -6,6 +6,9 @@ import sys
 
 #reminder: output into a file
 
+f = open("output.txt", 'w')
+sys.stdout = f
+
 tags = ["INDI", "NAME", "SEX", "BIRT", "DEAT", "FAMC", "FAMS", "FAM", "MARR", "HUSB", "WIFE", "CHIL", "DIV", "DATE", "HEAD", "TRLR", "NOTE"]
 months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
 
@@ -890,6 +893,30 @@ def genderroles(filename):
             print("Anomoly US02: " + husband['name'] + " was born after they were married")
     return ret_val
 
+# user story 02, birth before marriage
+def birth_before_marriage(filename):
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    ret_val = True
+    for fam in families:
+        wid = fam['wid']
+        hid = fam['hid']
+        mar_date = string_to_date(fam['married'])
+        if mar_date is None:
+            continue
+        wife = next(person for person in individuals if person['ID'] == wid)
+        husband = next(person for person in individuals if person['ID'] == hid)
+        wife_birth = string_to_date(wife['birthday'])
+        husb_birth = string_to_date(husband['birthday'])
+        if(wife_birth > mar_date):
+            ret_val = False
+            print("Anomoly US02: " + wife['name'] + " was born after they were married")
+        if(husb_birth > mar_date):
+            ret_val = False
+            print("Anomoly US02: " + husband['name'] + " was born after they were married")
+    return ret_val
+
 # user story 03
 def birth_before_death(filename):
     data = organize(filename)
@@ -1038,6 +1065,8 @@ def main():
     #user story 03
     if(birth_before_death(fname) == True):
         print("US03: All individuals have a birthday before their death")
+    
+    f.close()
     return 
 
 
