@@ -6,8 +6,8 @@ import sys
 
 #reminder: output into a file
 
-f = open("output.txt", 'w')
-sys.stdout = f
+# f = open("output.txt", 'w')
+# sys.stdout = f
 
 tags = ["INDI", "NAME", "SEX", "BIRT", "DEAT", "FAMC", "FAMS", "FAM", "MARR", "HUSB", "WIFE", "CHIL", "DIV", "DATE", "HEAD", "TRLR", "NOTE"]
 months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
@@ -1070,7 +1070,7 @@ def main():
     if(birth_before_death(fname) == True):
         print("US03: All individuals have a birthday before their death")
     
-    f.close()
+    # f.close()
     return 
 
 
