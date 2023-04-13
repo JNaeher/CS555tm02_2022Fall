@@ -101,3 +101,11 @@ class TestUS15(unittest.TestCase):
 class TestUS21(unittest.TestCase):
     def test_genderroles(self):
         self.assertEqual(genderroles('test_file.ged'), True) 
+
+class TestUS04(unittest.TestCase):
+    def test_marriage_before_divorce(self):
+        self.assertEqual(marriage_before_divorce('test_file.ged'), True) 
+
+class TestUS05(unittest.TestCase):
+    def test_marriage_before_death(self):
+        self.assertEqual(marriage_before_death('test_file.ged'), True) 
