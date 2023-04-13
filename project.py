@@ -969,6 +969,23 @@ def large_age_marriage_difference(data):
                     large_couples.append[fam]
     return large_couples
 
+#user story 04
+def marriage_before_divorce(filename):
+    data = organize(filename)
+    families = data[1]
+    temp = True
+    for fam in families:
+        marriage_date = string_to_date(fam['married'])
+        divorce_date = string_to_date(fam['divorced'])
+        if marriage_date is None:
+            continue
+        if divorce_date is None:
+            continue
+        if marriage_date > divorce_date:
+            temp = False
+            print("US04: Family " + fam['ID'] + " has a marriage date after their divorce date.")
+    return temp
+
 def main():
     #getting data from the file given from command line
 
@@ -1069,6 +1086,10 @@ def main():
     #user story 03
     if(birth_before_death(fname) == True):
         print("US03: All individuals have a birthday before their death")
+
+    #user story 04
+    if(marriage_before_divorce(fname) == True):
+        print("US04: All divorces occur after marriage")
     
     # f.close()
     return 
