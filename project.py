@@ -986,6 +986,41 @@ def marriage_before_divorce(filename):
             print("US04: Family " + fam['ID'] + " has a marriage date after their divorce date.")
     return temp
 
+#user story 05
+def marriage_before_death(filename):
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    ret = True
+    for fam in families:
+        wid = fam['wid']
+        hid = fam['hid']
+        marriage_date = string_to_date(fam['married'])
+        if marriage_date is None:
+            continue
+        wife = next(person for person in individuals if person['ID'] == wid)
+        husband = next(person for person in individuals if person['ID'] == hid)
+        wife_death = string_to_date(wife['death'])
+        husb_death = string_to_date(husband['death'])
+        if wife_death is None and husb_death is None:
+            continue
+        if wife_death is None and husb_death is not None:
+            if(husb_death < marriage_date):
+                ret = False
+                print("US05: Husband in family " + fam['ID'] + " died before their marriage.")
+        if wife_death is not None and husb_death is None:
+            if(wife_death < marriage_date):
+                ret = False
+                print("US05: Wife in family " + fam['ID'] + " died before their marriage.")
+        if wife_death is not None and husb_death is not None:
+            if(husb_death < marriage_date):
+                ret = False
+                print("US05: Husband in family " + fam['ID'] + " died before their marriage.")
+            if(wife_death < marriage_date):
+                ret = False
+                print("US05: Wife in family " + fam['ID'] + " died before their marriage.")
+    return ret
+
 def main():
     #getting data from the file given from command line
 
@@ -1090,6 +1125,10 @@ def main():
     #user story 04
     if(marriage_before_divorce(fname) == True):
         print("US04: All divorces occur after marriage")
+
+    #user story 05
+    if(marriage_before_death(fname) == True):
+        print("US05: All marriages occur while individuals involved are alive.")
     
     # f.close()
     return 
