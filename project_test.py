@@ -49,3 +49,7 @@ class TestUS21(unittest.TestCase):
     def test_genderroles(self):
         self.assertEqual(genderroles('test_file.ged'), False) 
 
+class TestUS33(unittest.TestCase):
+    def orphan(self):
+        self.assertEqual(orphan('test_file.ged'), False) 
+

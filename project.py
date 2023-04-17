@@ -489,7 +489,32 @@ def genderroles(filename):
                     val=False                
     return val
 
-
+def orphan(filename):
+    val=True
+    fatherval=True
+    motherval=True
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    name_list= []
+    for fam in families: 
+        dad_id= fam['hid']
+        mom_id= fam['wid']
+        children=fam['children']
+        for check in individuals:
+            if(dad_id==check['ID']):
+                if(check['death']==True):
+                    fatherval=True
+            if(mom_id==check['ID']):
+                if(check['death']==True):
+                    motherval=True
+        if(motherval==True and fatherval==True):
+            for child in children:
+                for seccheck in individuals:
+                    if(child==check['ID']):
+                        age=check['age']
+                        if(age<18):
+                            val=False                
 def main():
     #getting data from the file given from command line
     fname = sys.argv[1]
@@ -537,6 +562,10 @@ def main():
     #khushi's user story 21
     if(genderroles(fname) == True):
         print("Correct US21: Each family has correct gender roles for the Husband and Wife")
+
+    #khushi's user story 33
+    if(orphan(fname) == True):
+        print("Correct US33: Each family has no orphaned children")
 
     return 
 
