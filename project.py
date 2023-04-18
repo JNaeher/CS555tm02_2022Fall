@@ -1020,6 +1020,31 @@ def marriage_before_death(filename):
                 ret = False
                 print("US05: Wife in family " + fam['ID'] + " died before their marriage.")
     return ret
+
+def check_bigamy(filename):
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    ret = False
+    for fam in families:
+        marriage_date = string_to_date(fam['married'])
+        divorced_date = string_to_date(fam['divorced'])
+        if marriage_date is None or divorced_date is None:
+            continue
+        wid = fam['wid']
+        hid = fam['hid']
+        for fam2 in families:
+            if (wid == fam2['wid']) == (hid == fam2['hid']): # use == as logical xnor
+                continue
+            if marriage_date <= string_to_date(fam2['married']) <= divorced_date or \
+               string_to_date(fam2['married']) <= marriage_date <= string_to_date(fam2['divorced']):
+               ret = True
+               print("US11: bigamy occurs with " + fam['ID'] + " and " + fam2['ID'])
+    return ret
+
+            
+
+
 #User Story 33: Orphaned children
 def orphan(filename):
     val=True
