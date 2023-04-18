@@ -132,3 +132,7 @@ class TestUS04(unittest.TestCase):
 class TestUS05(unittest.TestCase):
     def test_marriage_before_death(self):
         self.assertEqual(marriage_before_death('test_file.ged'), True) 
+
+class TestUS11(unittest.TestCase):
+    def test_bigamy(self):
+        self.assertEqual(check_bigamy('test_file.ged'), False) 
