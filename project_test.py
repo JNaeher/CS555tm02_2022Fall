@@ -93,6 +93,29 @@ class TestUS21(unittest.TestCase):
     def test_genderroles(self):
         self.assertEqual(genderroles('test_file.ged'), False) 
 
+class TestUS33(unittest.TestCase):
+    def orphan(self):
+        self.assertEqual(orphan('test_file.ged'), True) 
+
+class TestUS28(unittest.TestCase):
+    def uniquefam(self):
+        self.assertEqual(uniquefam('test_file.ged'),True) 
+
+class TestUS15(unittest.TestCase):
+    def test_fewerthan(self):
+        self.assertEqual(fewerthan('test_file.ged'), True) 
+
+class TestUS21(unittest.TestCase):
+    def test_genderroles(self):
+        self.assertEqual(genderroles('test_file.ged'), True) 
+
+class TestUS04(unittest.TestCase):
+    def test_marriage_before_divorce(self):
+        self.assertEqual(marriage_before_divorce('test_file.ged'), True) 
+
+class TestUS05(unittest.TestCase):
+    def test_marriage_before_death(self):
+        self.assertEqual(marriage_before_death('test_file.ged'), True) 
 
 class TestUS15(unittest.TestCase):
     def test_fewerthan(self):
