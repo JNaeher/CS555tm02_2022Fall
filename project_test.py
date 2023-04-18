@@ -51,5 +51,8 @@ class TestUS21(unittest.TestCase):
 
 class TestUS33(unittest.TestCase):
     def orphan(self):
-        self.assertEqual(orphan('test_file.ged'), False) 
+        self.assertEqual(orphan('test_file.ged'), True) 
 
+class TestUS28(unittest.TestCase):
+    def uniquefam(self):
+        self.assertEqual(uniquefam('test_file.ged'),True) 

@@ -489,6 +489,7 @@ def genderroles(filename):
                     val=False                
     return val
 
+#User Story 33: Orphaned children
 def orphan(filename):
     val=True
     fatherval=True
@@ -514,7 +515,47 @@ def orphan(filename):
                     if(child==check['ID']):
                         age=check['age']
                         if(age<18):
-                            val=False                
+                            val=False
+                            print(check['name'])                
+    return val
+
+#User Story 24: Unique families by spouses
+def uniquefam(filename):
+    val=True
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    interval=0
+    dadname=""
+    momname=""
+    dadname2=""
+    momname2=""
+    mdate=""
+    mdate2=""
+    interval=1
+    for fam in families:
+        dad_id= fam['hid']
+        mom_id= fam['wid']
+        for check in individuals:
+            if(dad_id==check['ID']):
+                dadname=check['name']
+                mdate= fam['married']
+            if(mom_id==check['ID']):
+                momname=check['name']
+        for family in families[interval:]:
+            dad_id2= family['hid']
+            mom_id2= family['wid']
+            for checker in individuals:
+                if(dad_id2==checker['ID']):
+                    dadname2=checker['name']
+                    mdate2= family['married']
+                if(mom_id2==checker['ID']):
+                    momname2=checker['name']
+            if(momname==momname2 and dadname==dadname2 and mdate==mdate2):
+                val=False
+        interval=interval+1
+    return val
+
 def main():
     #getting data from the file given from command line
     fname = sys.argv[1]
@@ -566,6 +607,10 @@ def main():
     #khushi's user story 33
     if(orphan(fname) == True):
         print("Correct US33: Each family has no orphaned children")
+
+    #khushi's user story 24
+    if(uniquefam(fname) == True):
+        print("Correct US24: Unique families by spouses")
 
     return 
 
