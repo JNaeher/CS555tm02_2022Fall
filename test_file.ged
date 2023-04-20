@@ -58,7 +58,7 @@
 1 BIRT
 2 DATE 14 DEC 2014
 1 DEAT Y
-2 DATE 5 APR 2023
+2 DATE 19 APR 2023
 1 FAMC @F1@
 0 @I6@ INDI
 1 NAME Robert /Kardashian/
@@ -202,7 +202,7 @@
 2 DATE 28 OCT 1949
 1 FAMS @F3@
 0 @I21@ INDI
-1 NAME Kendall /Jenner/
+1 NAME Kylie /Jenner/
 2 GIVN Kendall
 2 SURN Jenner
 2 _MARNM Jenner
@@ -236,7 +236,7 @@
 2 _MARNM Webster
 1 SEX F
 1 BIRT
-2 DATE 5 APR 2023
+2 DATE 19 APR 2023
 1 FAMC @F7@
 0 @I25@ INDI
 1 NAME Jake /Naeher/

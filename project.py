@@ -768,8 +768,6 @@ def livingmarried(filename):
                     mfirst=mname[0]
                     mlast=mname[1]
                     name_list.append(mfirst+" "+mlast)
-    for each in name_list:
-        print(each)
     return val
 
 #User Story 15: Fewer than 15 siblings
@@ -904,7 +902,6 @@ def dates_after_current(filename):
 
     return temp
 
-# BAD SMELL CODE DUPLICATE CODE FOR USER STORY 35 and 36
 # user story 35 and 36
 def recent_births_and_deaths(data):
     individuals = data[0]
@@ -1211,6 +1208,88 @@ def first_cousins_nomarry(filename):
             return valid
     return valid
 
+#user story 20
+def aunts_uncles_not_marry_niece_nephews(data):
+    families = data[1]
+    valid = True
+    for fam in families:
+        hid = fam['hid']
+        wid = fam['wid']
+        aunts_uncles = []
+        for GPfam in families:
+            if hid in GPfam['children']:
+                aunts_uncles.append(GPfam['children'])
+            if wid in GPfam['children']:
+                aunts_uncles.append(GPfam['children'])
+        for MPArt in families:
+            if MPArt['hid'] in fam['children'] and MPArt['wid'] in aunts_uncles:
+                valid = False
+                print('Error US 20: Aunt(' + MPArt['wid'] + ') cannot marry Nephew(' + MPArt['hid'] + ').')
+            if MPArt['wid'] in fam['children'] and MPArt['hid'] in aunts_uncles:
+                valid = False
+                print('Error US 20: Uncle(' + MPArt['hid'] + ') cannot marry Neice(' + MPArt['wid'] + ').')
+    return valid
+
+# convert date string to date type
+
+def string_to_date_for_birthday(string): 
+    x = 0
+    if string is None:
+        return None
+    temp = string.split(" ", 2)
+    if(len(temp) == 3):
+        day = int(temp[0])
+        year = int(date.today().strftime("%Y"))
+        month = 0
+        x = 1
+    else:
+        year = int(date.today().strftime("%Y"))
+        month = 0
+        day = 1
+    
+    if(temp[x] == 'JAN'):
+        month = 1
+    if(temp[x] == 'FEB'):
+        month = 2
+    if(temp[x] == 'MAR'):
+        month = 3
+    if(temp[x] == 'APR'):  
+        month = 4
+    if(temp[x] == 'MAY'):
+        month = 5
+    if(temp[x] == 'JUN'):
+        month = 6
+    if(temp[x] == 'JUL'):
+        month = 7
+    if(temp[x] == 'AUG'):
+        month = 8
+    if(temp[x] == 'SEP'):
+        month = 9
+    if(temp[x] == 'OCT'):
+        month = 10
+    if(temp[x] == 'NOV'):
+        month = 11 
+    if(temp[x] == 'DEC'):
+        month = 12
+    if(date_helper(day,temp[x])):
+        dateRes = date(year, month, day)
+        if (dateRes - date.today()).days < 0:
+            return date(year+1, month, day)
+        else:
+            return dateRes
+    else:
+        return None
+
+#user story 38
+def upcoming_birthdays(data):
+    individuals = data[0]
+    upcomingBirthdays = []
+    for indiv in  individuals:
+        birthday = string_to_date_for_birthday(birthday_finder(individuals , indiv['ID']))
+        if(birthday != None and 0 <= (birthday - date.today()).days <= 30):
+            upcomingBirthdays.append(indiv)
+    return(upcomingBirthdays)
+
 def main():
     #getting data from the file given from command line
 
@@ -1226,33 +1305,41 @@ def main():
     #user story 35
     recent_birth__and_death = recent_births_and_deaths(data)
     if(len(recent_birth__and_death[0]) > 0):
-        print("\nRecent Births in the last 30 days:")
+        print("\nUS35: Recent Births in the last 30 days:")
         printIndividuals(recent_birth__and_death[0], families)
     else:
-        print("\nNo Recent Births in the last 30 days:")
+        print("\nUS36: No Recent Births in the last 30 days:")
     
     #user story 36
     if(len(recent_birth__and_death[1]) > 0):
-        print("\nRecent Deaths in the last 30 days:")
+        print("\nUS36: Recent Deaths in the last 30 days:")
         printIndividuals(recent_birth__and_death[1], families)
     else:
-        print("\nNo Recent Deaths in the last 30 days:")
+        print("\nUS36: No Recent Deaths in the last 30 days:")
+
+    #user story 38
+    upcoming_births = upcoming_birthdays(data)
+    if(len(upcoming_births) > 0):
+        print("\nUS38: Upcoming Birthdays in the next 30 days:")
+        printIndividuals(upcoming_births, families)
+    else:
+        print("\nUS38: No Upcoming Birthdays in the next 30 days:")
 
     #user story 31
     single_and_over_30_data = single_and_over_30(data)
     if(len(single_and_over_30_data) > 0):
-        print("\nFamily Members who are over 30 and haven't been married: ")
+        print("\nUS31: Family Members who are over 30 and haven't been married: ")
         printIndividuals(single_and_over_30_data, families)
     else:
-        print("\nNo Family Members who are over 30 and haven't been married:")
+        print("\nUS31: No Family Members who are over 30 and haven't been married:")
 
     #user story 34
     double_marriage_age = large_age_marriage_difference(data)
     if(len(double_marriage_age) > 0):
-        print("\nMarriages in which one couple is twice the age of the other: ")
+        print("\nUS34: Marriages in which one couple is twice the age of the other: ")
         printFamilies(individuals, single_and_over_30_data)
     else:
-        print("\nNo Marriages in which one couple is twice the age of the other: ")
+        print("\nUS34: No Marriages in which one couple is twice the age of the other: ")
 
     #does the checking from the user stories
 
@@ -1267,6 +1354,10 @@ def main():
     #user story 17
     if(no_marry_desc(fname) == True):
         print("Correct US17: No marriages occur between parents and descendants.")
+
+    #user story 20
+    if(aunts_uncles_not_marry_niece_nephews(data)):
+        print('Correct US20: No marriages between Aunts/Uncles and Necies/Nephews')
 
     #user story 22
     if(unique_indiv_id(fname) == True):
@@ -1306,28 +1397,28 @@ def main():
 
     #user story 02
     if(birth_before_marriage(fname) == True):
-        print("US 02: All marriages occured after those married were born")
+        print("Correct US02: All marriages occured after those married were born")
 
     #user story 03
     if(birth_before_death(fname) == True):
-        print("US03: All individuals have a birthday before their death")
+        print("Correct US03: All individuals have a birthday before their death")
 
     #user story 19
     if(first_cousins_nomarry(fname) == True):
-        print("US19: No marriages are between first cousins.")
+        print("Correct US19: No marriages are between first cousins.")
 
     #user story 14
     if(multiple_births(fname) == True):
-        print("US14: No more than 5 kids born at once.")
+        print("Correct US14: No more than 5 kids born at once.")
     
 
     #user story 04
     if(marriage_before_divorce(fname) == True):
-        print("US04: All divorces occur after marriage")
+        print("Correct US04: All divorces occur after marriage")
 
     #user story 05
     if(marriage_before_death(fname) == True):
-        print("US05: All marriages occur while individuals involved are alive.")
+        print("Correct US05: All marriages occur while individuals involved are alive.")
     
     # f.close()
     #khushi's user story 33
