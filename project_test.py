@@ -43,6 +43,16 @@ class TestUS34(unittest.TestCase):
         data = organize('test_file.ged')
         self.assertEqual(large_age_marriage_difference(data), [])
 
+class TestUS31(unittest.TestCase):
+    def test_single_and_over_30(self):
+        data = organize('test_file.ged')
+        self.assertEqual(single_and_over_30(data), [])
+
+class TestUS34(unittest.TestCase):
+    def double_age_marriage(self):
+        data = organize('test_file.ged')
+        self.assertEqual(large_age_marriage_difference(data), [])
+
 class TestUS35(unittest.TestCase):
     def test_recent_births(self):
         data = organize('test_file.ged')

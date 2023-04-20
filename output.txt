@@ -1,0 +1,29 @@
+Error US07: Individual (@I7@) died more than 150 years past their birth date.
+Error US07: Individual (@I12@) died more than 150 years past their birth date.
+Error US13: Children with IDs @I1@ and @I1@ have a birthday < 8 months apart and are not twins.
+Error US13: Children with IDs @I3@ and @I3@ have a birthday < 8 months apart and are not twins.
+Error US13: Children with IDs @I8@ and @I8@ have a birthday < 8 months apart and are not twins.
+Error US13: Children with IDs @I14@ and @I14@ have a birthday < 8 months apart and are not twins.
+Error US13: Children with IDs @I10@ and @I10@ have a birthday < 8 months apart and are not twins.
+Error US13: Children with IDs @I11@ and @I11@ have a birthday < 8 months apart and are not twins.
+Error US16: the males in the family @F2@ do not all have the same last name.
+Error US17: Individual (@I1@) married a descendant.
+US 29: Reign /Disick/ is deceased.
+US 29: Robert /Kardashian/ is deceased.
+US 29: John /Doe/ is deceased.
+Scott  Disick
+Kourtney  Kardashian
+Kris  Jenner
+Kris  Jenner
+Caitlyn  Jenner
+Kim  Kardashian
+Kanye  West
+Khloe  Kardashian
+Tristan  Thompson
+Rob  Kardashian
+Blac  Chyna
+Kylie  Jenner
+Travis  Scott
+Jake  Naeher
+John  Doe 2.0
+Jake  Naeher
