@@ -43,6 +43,16 @@ class TestUS34(unittest.TestCase):
         data = organize('test_file.ged')
         self.assertEqual(large_age_marriage_difference(data), [])
 
+class TestUS31(unittest.TestCase):
+    def test_single_and_over_30(self):
+        data = organize('test_file.ged')
+        self.assertEqual(single_and_over_30(data), [])
+
+class TestUS34(unittest.TestCase):
+    def double_age_marriage(self):
+        data = organize('test_file.ged')
+        self.assertEqual(large_age_marriage_difference(data), [])
+
 class TestUS35(unittest.TestCase):
     def test_recent_births(self):
         data = organize('test_file.ged')
@@ -136,3 +146,10 @@ class TestUS05(unittest.TestCase):
 class TestUS11(unittest.TestCase):
     def test_bigamy(self):
         self.assertEqual(check_bigamy('test_file.ged'), False) 
+class TestUS14(unittest.TestCase):
+    def test_multiple_births(self):
+        self.assertEqual(multiple_births('test_file.ged'), True) 
+
+class TestUS19(unittest.TestCase):
+    def test_first_cousins_nomarry(self):
+        self.assertEqual(first_cousins_nomarry('test_file.ged'), True) 

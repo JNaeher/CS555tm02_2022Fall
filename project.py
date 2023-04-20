@@ -9,6 +9,9 @@ import sys
 # f = open("output.txt", 'w')
 # sys.stdout = f
 
+# f = open("output.txt", 'w')
+# sys.stdout = f
+
 tags = ["INDI", "NAME", "SEX", "BIRT", "DEAT", "FAMC", "FAMS", "FAM", "MARR", "HUSB", "WIFE", "CHIL", "DIV", "DATE", "HEAD", "TRLR", "NOTE"]
 months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
 
@@ -506,6 +509,54 @@ def no_marry_desc(filename):
             elif(are_couple(families, hid, child)):
                 valid = False
                 print("Error US17: Individual " + "(" + hid + ") married a descendant.")
+    return valid
+
+# user story 14
+def multiple_births(filename):
+    valid = True
+    data = organize(filename)
+    families = data[1]
+    individuals = data[0]
+    for family in families:
+        children = family['children']
+        birthday_list = []
+        for child in children:
+            for check in individuals:
+                if(child == check['ID']):
+                    birthday = check['birthday']
+            if(birthday_list.count(birthday) == 5):
+                valid = False
+                print("Error US14: More than 5 siblings are born at once.")
+                return valid
+            else:
+                birthday_list.append(birthday)
+    return valid
+
+# user story 19
+def first_cousins_nomarry(filename):
+    valid = True
+    data = organize(filename)
+    families = data[1]
+    for family in families:
+        wid = family['wid']
+        hid = family['hid']
+        aunts_uncles = []
+        first_cousins = []
+        for family2 in families:
+            children = family2['children']
+            if (children.count(wid) != 0 or children.count(hid) != 0):
+                aunts_uncles.append(children)
+        for family3 in families:
+            if (aunts_uncles.count(family3['wid']) != 0 or aunts_uncles.count(family3['hid']) != 0):
+                first_cousins.append(family3['children'])
+        if(first_cousins.count(wid) == 0 and first_cousins.count(hid) != 0):
+            valid = False
+            print("Error US19: First cousins are married.")
+            return valid
+        if(first_cousins.count(wid) != 0 and first_cousins.count(hid) == 0):
+            valid = False
+            print("Error US19: First cousins are married.")
+            return valid
     return valid
     
 # user story 42: reject illegitimate dates
@@ -1112,6 +1163,54 @@ def uniquefam(filename):
         interval=interval+1
     return val
 
+# user story 14
+def multiple_births(filename):
+    valid = True
+    data = organize(filename)
+    families = data[1]
+    individuals = data[0]
+    for family in families:
+        children = family['children']
+        birthday_list = []
+        for child in children:
+            for check in individuals:
+                if(child == check['ID']):
+                    birthday = check['birthday']
+            if(birthday_list.count(birthday) == 5):
+                valid = False
+                print("Error US14: More than 5 siblings are born at once.")
+                return valid
+            else:
+                birthday_list.append(birthday)
+    return valid
+
+# user story 19
+def first_cousins_nomarry(filename):
+    valid = True
+    data = organize(filename)
+    families = data[1]
+    for family in families:
+        wid = family['wid']
+        hid = family['hid']
+        aunts_uncles = []
+        first_cousins = []
+        for family2 in families:
+            children = family2['children']
+            if (children.count(wid) != 0 or children.count(hid) != 0):
+                aunts_uncles.append(children)
+        for family3 in families:
+            if (aunts_uncles.count(family3['wid']) != 0 or aunts_uncles.count(family3['hid']) != 0):
+                first_cousins.append(family3['children'])
+        if(first_cousins.count(wid) == 0 and first_cousins.count(hid) != 0):
+            valid = False
+            print("Error US19: First cousins are married.")
+            return valid
+        if(first_cousins.count(wid) != 0 and first_cousins.count(hid) == 0):
+            valid = False
+            print("Error US19: First cousins are married.")
+            return valid
+    return valid
+
 def main():
     #getting data from the file given from command line
 
@@ -1212,6 +1311,15 @@ def main():
     #user story 03
     if(birth_before_death(fname) == True):
         print("US03: All individuals have a birthday before their death")
+
+    #user story 19
+    if(first_cousins_nomarry(fname) == True):
+        print("US19: No marriages are between first cousins.")
+
+    #user story 14
+    if(multiple_births(fname) == True):
+        print("US14: No more than 5 kids born at once.")
+    
 
     #user story 04
     if(marriage_before_divorce(fname) == True):
