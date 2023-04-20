@@ -1,29 +1,126 @@
-Error US07: Individual (@I7@) died more than 150 years past their birth date.
+python project.py test_file.ged
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Individuals:
++-------+-----------------------+--------+-------------+-----+-------+-------------+-------+--------+
+|   ID  |          Name         | Gender |   Birthday  | Age | Alive |    Death    | Child | Spouse |
++-------+-----------------------+--------+-------------+-----+-------+-------------+-------+--------+
+|  @I1@ |     Mason /Disick/    |   M    | 14 DEC 2009 |  13 |  True |     None    |  @F1@ |  None  |
+|  @I2@ |     Scott /Disick/    |   M    | 26 MAY 1983 |  39 |  True |     None    |  None |  @F1@  |
+|  @I3@ | Kourtney /Kardashian/ |   F    | 18 APR 1979 |  44 |  True |     None    |  @F2@ |  @F1@  |
+|  @I4@ |   Penelope /Disick/   |   F    |  8 JUL 2012 |  10 |  True |     None    |  @F1@ |  None  |
+|  @I5@ |     Reign /Disick/    |   F    | 14 DEC 2014 |  8  | False | 19 APR 2023 |  @F1@ |  None  |
+|  @I6@ |  Robert /Kardashian/  |   M    | 22 FEB 1944 |  59 | False | 30 SEP 2003 |  None |  @F2@  |
+|  @I7@ |     Kris /Jenner/     |   F    |  5 NOV 1955 |  67 |  True |     None    |  None |  @F3@  |
+|  @I8@ |    Kim /Kardashian/   |   F    | 21 OCT 1980 |  42 |  True |     None    |  @F2@ |  @F4@  |
+|  @I9@ |      Kanye /West/     |   M    |  8 JUN 1977 |  45 |  True |     None    |  None |  @F4@  |
+| @I10@ |      North /West/     |   F    | 15 JUN 2013 |  9  |  True |     None    |  @F4@ |  None  |
+| @I11@ |      Saint /West/     |   M    |  5 DEC 2015 |  7  |  True |     None    |  @F4@ |  None  |
+| @I12@ |     Chicago /West/    |   F    | 15 JAN 2018 |  5  |  True |     None    |  @F4@ |  None  |
+| @I13@ |      Psalm /West/     |   M    |  9 MAY 2019 |  3  |  True |     None    |  @F4@ |  None  |
+| @I14@ |   Khloe /Kardashian/  |   F    | 27 JUN 1984 |  38 |  True |     None    |  @F2@ |  @F5@  |
+| @I15@ |   Tristan /Thompson/  |   M    | 13 MAR 1991 |  32 |  True |     None    |  None |  @F5@  |
+| @I16@ |    True /Thompson/    |   F    | 12 APR 2018 |  5  |  True |     None    |  @F5@ |  None  |
+| @I17@ |    Rob /Kardashian/   |   M    | 17 MAR 1987 |  36 |  True |     None    |  @F2@ |  @F6@  |
+| @I18@ |      Blac /Chyna/     |   F    | 11 MAY 1988 |  34 |  True |     None    |  None |  @F6@  |
+| @I19@ |   Dream /Kardashian/  |   F    | 10 NOV 2016 |  6  |  True |     None    |  @F6@ |  None  |
+| @I20@ |    Caitlyn /Jenner/   |   F    | 28 OCT 1949 |  73 |  True |     None    |  None |  @F3@  |
+| @I21@ |     Kylie /Jenner/    |   F    |  3 NOV 1995 |  27 |  True |     None    |  @F3@ |  None  |
+| @I22@ |     Kylie /Jenner/    |   F    | 10 AUG 1997 |  25 |  True |     None    |  @F3@ |  @F7@  |
+| @I23@ |     Travis /Scott/    |   M    | 30 APR 1991 |  31 |  True |     None    |  None |  @F7@  |
+| @I24@ |    Stormi /Webster/   |   F    | 19 APR 2023 |  0  |  True |     None    |  @F7@ |  None  |
+| @I25@ |     Jake /Naeher/     |   M    | 21 MAR 2001 |  22 |  True |     None    |  @F2@ |  @F9@  |
+| @I26@ |       John /Doe/      |   M    |  7 OCT 2001 |  20 | False | 12 AUG 2022 |  None |  @F9@  |
+| @I27@ |     John /Doe 2.0/    |   M    | 13 DEC 2002 |  20 |  True |     None    |  None |  @F8@  |
++-------+-----------------------+--------+-------------+-----+-------+-------------+-------+--------+
+Families:
++------+-------------+-------------+------------+---------------------+---------+-----------------------+---------------------------------------------+
+|  ID  |   Married   |   Divorced  | Husband ID |     Husband Name    | Wife ID |       Wife Name       |                   Children                  |
++------+-------------+-------------+------------+---------------------+---------+-----------------------+---------------------------------------------+
+| @F1@ |     None    |     None    |    @I2@    |    Scott /Disick/   |   @I3@  | Kourtney /Kardashian/ |           ['@I1@', '@I4@', '@I5@']          |
+| @F2@ |  8 JUL 1978 |   MAR 1991  |    @I6@    | Robert /Kardashian/ |   @I7@  |     Kris /Jenner/     | ['@I3@', '@I8@', '@I14@', '@I17@', '@I25@'] |
+| @F3@ |   APR 1991  | 23 MAR 2015 |   @I20@    |   Caitlyn /Jenner/  |   @I7@  |     Kris /Jenner/     |              ['@I21@', '@I22@']             |
+| @F4@ | 24 MAY 2014 | 29 NOV 2022 |    @I9@    |     Kanye /West/    |   @I8@  |    Kim /Kardashian/   |     ['@I10@', '@I11@', '@I12@', '@I13@']    |
+| @F5@ |     None    |     None    |   @I15@    |  Tristan /Thompson/ |  @I14@  |   Khloe /Kardashian/  |                  ['@I16@']                  |
+| @F6@ |     None    |     None    |   @I17@    |   Rob /Kardashian/  |  @I18@  |      Blac /Chyna/     |                  ['@I19@']                  |
+| @F7@ |     None    |     None    |   @I23@    |    Travis /Scott/   |  @I22@  |     Kylie /Jenner/    |                  ['@I24@']                  |
+| @F8@ |  4 JAN 2023 |     None    |   @I25@    |    Jake /Naeher/    |  @I27@  |     John /Doe 2.0/    |                      []                     |
+| @F9@ | 18 JUL 2021 |     None    |   @I25@    |    Jake /Naeher/    |  @I26@  |       John /Doe/      |                      []                     |
++------+-------------+-------------+------------+---------------------+---------+-----------------------+---------------------------------------------+
+
+US35: Recent Births in the last 30 days:
+Individuals:
++-------+------------------+--------+-------------+-----+-------+-------+-------+--------+
+|   ID  |       Name       | Gender |   Birthday  | Age | Alive | Death | Child | Spouse |
++-------+------------------+--------+-------------+-----+-------+-------+-------+--------+
+| @I24@ | Stormi /Webster/ |   F    | 19 APR 2023 |  0  |  True |  None |  @F7@ |  None  |
++-------+------------------+--------+-------------+-----+-------+-------+-------+--------+
+
+US36: Recent Deaths in the last 30 days:
+Individuals:
++------+----------------+--------+-------------+-----+-------+-------------+-------+--------+
+|  ID  |      Name      | Gender |   Birthday  | Age | Alive |    Death    | Child | Spouse |
++------+----------------+--------+-------------+-----+-------+-------------+-------+--------+
+| @I5@ | Reign /Disick/ |   F    | 14 DEC 2014 |  8  | False | 19 APR 2023 |  @F1@ |  None  |
++------+----------------+--------+-------------+-----+-------+-------------+-------+--------+
+
+US38: Upcoming Birthdays in the next 30 days:
+Individuals:
++-------+----------------+--------+-------------+-----+-------+-------+-------+--------+
+|   ID  |      Name      | Gender |   Birthday  | Age | Alive | Death | Child | Spouse |
++-------+----------------+--------+-------------+-----+-------+-------+-------+--------+
+| @I13@ |  Psalm /West/  |   M    |  9 MAY 2019 |  3  |  True |  None |  @F4@ |  None  |
+| @I18@ |  Blac /Chyna/  |   F    | 11 MAY 1988 |  34 |  True |  None |  None |  @F6@  |
+| @I23@ | Travis /Scott/ |   M    | 30 APR 1991 |  31 |  True |  None |  None |  @F7@  |
++-------+----------------+--------+-------------+-----+-------+-------+-------+--------+
+
+US31: No Family Members who are over 30 and haven't been married:
+
+US34: No Marriages in which one couple is twice the age of the other:
+Correct US07: All dead individuals died less than 150 years after their birth date.
+Correct US09: All Children born while parents where alive
+Correct US17: No marriages occur between parents and descendants.
+Correct US20: No marriages between Aunts/Uncles and Necies/Nephews
+Correct US22: All individual IDs are unique.
+Correct US22: All family IDs are unique.
+Correct US42: All dates are legitimate
+Error US16: the males in the family @F2@ do not all have the same last name.
+Correct US18: No siblings are married to each other
+Correct US12: Mother should be less than 60 years older than her children and father should be less than 80 years older than his children
+Correct US30: List living married people
+Correct US15: Each family has fewer than 15 siblings
+Correct US21: Each family has correct gender roles for the Husband and Wife
+Correct US02: All marriages occured after those married were born
+Correct US03: All individuals have a birthday before their death
+Correct US19: No marriages are between first cousins.
+Correct US14: No more than 5 kids born at once.
+Correct US04: All divorces occur after marriage
+Correct US05: All marriages occur while individuals involved are alive.
+Correct US33: Each family has no orphaned children
+Correct US24: Unique families by spouses
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+python -m unittest project_test.py
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+.....Error US07: Individual (@I7@) died more than 150 years past their birth date.
 Error US07: Individual (@I12@) died more than 150 years past their birth date.
-Error US13: Children with IDs @I1@ and @I1@ have a birthday < 8 months apart and are not twins.
+.Error US08: Child with ID @I10@ has a birthday before parent's marriage.
+...Error US13: Children with IDs @I1@ and @I1@ have a birthday < 8 months apart and are not twins.
 Error US13: Children with IDs @I3@ and @I3@ have a birthday < 8 months apart and are not twins.
 Error US13: Children with IDs @I8@ and @I8@ have a birthday < 8 months apart and are not twins.
 Error US13: Children with IDs @I14@ and @I14@ have a birthday < 8 months apart and are not twins.
 Error US13: Children with IDs @I10@ and @I10@ have a birthday < 8 months apart and are not twins.
 Error US13: Children with IDs @I11@ and @I11@ have a birthday < 8 months apart and are not twins.
-Error US16: the males in the family @F2@ do not all have the same last name.
-Error US17: Individual (@I1@) married a descendant.
-US 29: Reign /Disick/ is deceased.
+...Error US16: the males in the family @F2@ do not all have the same last name.
+.Error US17: Individual (@I1@) married a descendant.
+........US 29: Reign /Disick/ is deceased.
 US 29: Robert /Kardashian/ is deceased.
 US 29: John /Doe/ is deceased.
-Scott  Disick
-Kourtney  Kardashian
-Kris  Jenner
-Kris  Jenner
-Caitlyn  Jenner
-Kim  Kardashian
-Kanye  West
-Khloe  Kardashian
-Tristan  Thompson
-Rob  Kardashian
-Blac  Chyna
-Kylie  Jenner
-Travis  Scott
-Jake  Naeher
-John  Doe 2.0
-Jake  Naeher
+.......
+----------------------------------------------------------------------
+Ran 28 tests in 0.118s
+
+OK
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
