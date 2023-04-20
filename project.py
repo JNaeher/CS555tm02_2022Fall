@@ -1,9 +1,13 @@
 from unittest import skip
 from prettytable import PrettyTable
 from datetime import date
+from dateutil import relativedelta
 import sys
 
 #reminder: output into a file
+
+# f = open("output.txt", 'w')
+# sys.stdout = f
 
 tags = ["INDI", "NAME", "SEX", "BIRT", "DEAT", "FAMC", "FAMS", "FAM", "MARR", "HUSB", "WIFE", "CHIL", "DIV", "DATE", "HEAD", "TRLR", "NOTE"]
 months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
@@ -355,6 +359,47 @@ def unique_firstnames_in_fam(filename):
             birthdays.append(childbirthday)
     return valid
 
+def birth_after_marriage(filename):
+    valid = True
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    for family in families:
+        marriage_date = string_to_date(family['married'])
+        children = family['children']
+        for child in children:
+            childbirthday = ''
+            childid = ''
+            for check in individuals:
+                if((child == check['ID'])):
+                    childbirthday = string_to_date(birthday_finder(individuals, check['ID']))
+                    childid = check['ID']
+            if(marriage_date != None and marriage_date > childbirthday):
+                valid = False
+                print("Error US08: Child with ID " + childid + " has a birthday before parent's marriage.")
+    return valid
+
+def sibling_spacing(filename):
+    valid = True
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    for family in families:
+        birthdays = []
+        children = family['children']
+        for child in children:
+            for check in individuals:
+                if((child == check['ID'])):
+                    birthdays.append(string_to_date(birthday_finder(individuals, check['ID'])))
+        # iterate pairwise over birthdays
+        for i in range(0, len(birthdays) - 2):
+            delta = relativedelta.relativedelta(birthdays[i], birthdays[i+1])
+            if(abs(delta.months) <= 8 or (abs(delta.months) < 1 and abs(delta.days < 2))):
+                valid = False
+                print("Error US13: Children with IDs " + children[i] + " and " + children[i] + " have a birthday < 8 months apart and are not twins.")
+
+    return valid
+
 #user story 23: unique name and birth date
 def unique_name_id(filename):
     valid = True
@@ -462,103 +507,7 @@ def no_marry_desc(filename):
                 valid = False
                 print("Error US17: Individual " + "(" + hid + ") married a descendant.")
     return valid
-
-# user story 14
-def multiple_births(filename):
-    valid = True
-    data = organize(filename)
-    families = data[1]
-    individuals = data[0]
-    for family in families:
-        children = family['children']
-        birthday_list = []
-        for child in children:
-            for check in individuals:
-                if(child == check['ID']):
-                    birthday = check['birthday']
-            if(birthday_list.count(birthday) == 5):
-                valid = False
-                print("Error US14: More than 5 siblings are born at once.")
-                return valid
-            else:
-                birthday_list.append(birthday)
-    return valid
-
-# user story 19
-def first_cousins_nomarry(filename):
-    valid = True
-    data = organize(filename)
-    families = data[1]
-    for family in families:
-        wid = family['wid']
-        hid = family['hid']
-        aunts_uncles = []
-        first_cousins = []
-        for family2 in families:
-            children = family2['children']
-            if (children.count(wid) != 0 or children.count(hid) != 0):
-                aunts_uncles.append(children)
-        for family3 in families:
-            if (aunts_uncles.count(family3['wid']) != 0 or aunts_uncles.count(family3['hid']) != 0):
-                first_cousins.append(family3['children'])
-        if(first_cousins.count(wid) == 0 and first_cousins.count(hid) != 0):
-            valid = False
-            print("Error US19: First cousins are married.")
-            return valid
-        if(first_cousins.count(wid) != 0 and first_cousins.count(hid) == 0):
-            valid = False
-            print("Error US19: First cousins are married.")
-            return valid
-    return valid
     
-# user story 14
-def multiple_births(filename):
-    valid = True
-    data = organize(filename)
-    families = data[1]
-    individuals = data[0]
-    for family in families:
-        children = family['children']
-        birthday_list = []
-        for child in children:
-            for check in individuals:
-                if(child == check['ID']):
-                    birthday = check['birthday']
-            if(birthday_list.count(birthday) == 5):
-                valid = False
-                print("Error US14: More than 5 siblings are born at once.")
-                return valid
-            else:
-                birthday_list.append(birthday)
-    return valid
-
-# user story 19
-def first_cousins_nomarry(filename):
-    valid = True
-    data = organize(filename)
-    families = data[1]
-    for family in families:
-        wid = family['wid']
-        hid = family['hid']
-        aunts_uncles = []
-        first_cousins = []
-        for family2 in families:
-            children = family2['children']
-            if (children.count(wid) != 0 or children.count(hid) != 0):
-                aunts_uncles.append(children)
-        for family3 in families:
-            if (aunts_uncles.count(family3['wid']) != 0 or aunts_uncles.count(family3['hid']) != 0):
-                first_cousins.append(family3['children'])
-        if(first_cousins.count(wid) == 0 and first_cousins.count(hid) != 0):
-            valid = False
-            print("Error US19: First cousins are married.")
-            return valid
-        if(first_cousins.count(wid) != 0 and first_cousins.count(hid) == 0):
-            valid = False
-            print("Error US19: First cousins are married.")
-            return valid
-    return valid
-        
 # user story 42: reject illegitimate dates
 def date_helper(day, month):
     day = int(day)
@@ -772,6 +721,24 @@ def livingmarried(filename):
         print(each)
     return val
 
+#User Story 15: Fewer than 15 siblings
+def fewerthan(filename):
+    fval=True
+    fdata = organize(filename)
+    individuals = fdata[0]
+    families = fdata[1]
+    fval=True
+    fdata = organize(filename)
+    individuals = fdata[0]
+    families = fdata[1]
+    name_list= []
+    for fam in families:
+        children=fam['children']
+        numofchildren=len(children)
+        if(numofchildren>15):
+            print("Family "+fam['ID']+" has more than 15 siblings")
+            fval=False
+    return fval
 # returns the diffence between 2 date strings
 # in terms of months
 def find_month_differance(start, end):
@@ -901,6 +868,155 @@ def recent_births_and_deaths(data):
             recentDeaths.append(indiv)
     return([recentBirths,recentDeaths])
 
+#User Story 21: Correct gender for role
+def genderroles(filename):
+    val=True
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    ret_val = True
+    for fam in families:
+        wid = fam['wid']
+        hid = fam['hid']
+        mar_date = string_to_date(fam['married'])
+        if mar_date is None:
+            continue
+        wife = next(person for person in individuals if person['ID'] == wid)
+        husband = next(person for person in individuals if person['ID'] == hid)
+        wife_birth = string_to_date(wife['birthday'])
+        husb_birth = string_to_date(husband['birthday'])
+        if(wife_birth > mar_date):
+            ret_val = False
+            print("Anomoly US02: " + wife['name'] + " was born after they were married")
+        if(husb_birth > mar_date):
+            ret_val = False
+            print("Anomoly US02: " + husband['name'] + " was born after they were married")
+    return ret_val
+
+# user story 02, birth before marriage
+def birth_before_marriage(filename):
+    data = organize(filename)
+    individuals = data[0]
+    families = data[1]
+    ret_val = True
+    for fam in families:
+        wid = fam['wid']
+        hid = fam['hid']
+        mar_date = string_to_date(fam['married'])
+        if mar_date is None:
+            continue
+        wife = next(person for person in individuals if person['ID'] == wid)
+        husband = next(person for person in individuals if person['ID'] == hid)
+        wife_birth = string_to_date(wife['birthday'])
+        husb_birth = string_to_date(husband['birthday'])
+        if(wife_birth > mar_date):
+            ret_val = False
+            print("Anomoly US02: " + wife['name'] + " was born after they were married")
+        if(husb_birth > mar_date):
+            ret_val = False
+            print("Anomoly US02: " + husband['name'] + " was born after they were married")
+    return ret_val
+
+# user story 03
+def birth_before_death(filename):
+    data = organize(filename)
+    individuals = data[0]
+    ret_val = True
+    for person in individuals:
+        if person['alive'] == False:
+            birth = string_to_date(person['birthday'])
+            death = string_to_date(person['death'])
+            if(birth > death):
+                ret_val = False
+                print("Anomoly US03: " + person['name'] + " has a birthday after their death.")
+    return ret_val
+
+def get_individual(individuals, id):
+    for indiv in individuals:
+        if indiv['ID'] == id:
+            return indiv
+    return None
+
+# user story 31
+# List living single
+def single_and_over_30(data):
+    individuals = data[0]
+    single_indivis = []
+    for indiv in individuals:
+        if indiv['age'] > 30 and indiv['spouse'] == None:
+            single_indivis.append(indiv)
+    return single_indivis
+
+# user story 34
+# List large age differences
+def large_age_marriage_difference(data):
+    individuals = data[0]
+    families = data[1]
+    large_couples = []
+    for fam in families:
+        marriage_date = fam['married']
+        if marriage_date != None:
+            marriage = string_to_date(marriage_date)
+            hus = get_individual(individuals, fam['hid'])
+            wif = get_individual(individuals, fam['wid'])
+            hus_marriage_age = (marriage - string_to_date(hus['birthday'])).days / 365
+            wif_marriage_age = (marriage - string_to_date(wif['birthday'])).days / 365
+            if hus_marriage_age > wif_marriage_age :
+                if hus_marriage_age > 2 * wif_marriage_age :
+                    large_couples.append[fam]
+            else :
+                if 2 * hus_marriage_age < wif_marriage_age :
+                    large_couples.append[fam]
+    return large_couples
+
+# user story 14
+def multiple_births(filename):
+    valid = True
+    data = organize(filename)
+    families = data[1]
+    individuals = data[0]
+    for family in families:
+        children = family['children']
+        birthday_list = []
+        for child in children:
+            for check in individuals:
+                if(child == check['ID']):
+                    birthday = check['birthday']
+            if(birthday_list.count(birthday) == 5):
+                valid = False
+                print("Error US14: More than 5 siblings are born at once.")
+                return valid
+            else:
+                birthday_list.append(birthday)
+    return valid
+
+# user story 19
+def first_cousins_nomarry(filename):
+    valid = True
+    data = organize(filename)
+    families = data[1]
+    for family in families:
+        wid = family['wid']
+        hid = family['hid']
+        aunts_uncles = []
+        first_cousins = []
+        for family2 in families:
+            children = family2['children']
+            if (children.count(wid) != 0 or children.count(hid) != 0):
+                aunts_uncles.append(children)
+        for family3 in families:
+            if (aunts_uncles.count(family3['wid']) != 0 or aunts_uncles.count(family3['hid']) != 0):
+                first_cousins.append(family3['children'])
+        if(first_cousins.count(wid) == 0 and first_cousins.count(hid) != 0):
+            valid = False
+            print("Error US19: First cousins are married.")
+            return valid
+        if(first_cousins.count(wid) != 0 and first_cousins.count(hid) == 0):
+            valid = False
+            print("Error US19: First cousins are married.")
+            return valid
+    return valid
+
 def main():
     #getting data from the file given from command line
 
@@ -927,25 +1043,7 @@ def main():
         printIndividuals(recent_birth__and_death[1], families)
     else:
         print("\nNo Recent Deaths in the last 30 days:")
-    
 
-    #user story 31
-    single_and_over_30_data = single_and_over_30(data)
-    if(len(single_and_over_30_data) > 0):
-        print("\nFamily Members who are over 30 and haven't been married: ")
-        printIndividuals(single_and_over_30_data, families)
-    else:
-        print("\nNo Family Members who are over 30 and haven't been married:")
-
-    #user story 34
-    double_marriage_age = large_age_marriage_difference(data)
-    if(len(double_marriage_age) > 0):
-        print("\nMarriages in which one couple is twice the age of the other: ")
-        printFamilies(individuals, single_and_over_30_data)
-    else:
-        print("\nNo Marriages in which one couple is twice the age of the other: ")
-
-    
     #user story 31
     single_and_over_30_data = single_and_over_30(data)
     if(len(single_and_over_30_data) > 0):
@@ -982,6 +1080,7 @@ def main():
     
     if(unique_family_id(fname) == True):
         print("Correct US22: All family IDs are unique.")
+    
 
     #user story 42
     if(date_checker(fname) == True):
@@ -1003,38 +1102,33 @@ def main():
     if(livingmarried(fname) == True):
         print("Correct US30: List living married people")
 
+    #khushi's user story 15
+    if(fewerthan(fname) == True):
+        print("Correct US15: Each family has fewer than 15 siblings")
 
-    #user story 06
-    if(divorce_before_death(fname) == True):
-        print("Correct US06: All divorces occur before individual deaths.")
+    #khushi's user story 21 sprint 3
+    if(genderroles(fname) == True):
+        print("Correct US21: Each family has correct gender roles for the Husband and Wife")
 
-    #user story 10
-    if(marriage_after_14(fname) == True):
-        print("Correct US10: All marriages occur after individuals turn 14.")
-    #khushi user story 16
-    if(male_lastname(fname) == True):
-        print("Correct US16: All male names are the same")
+    #user story 02
+    if(birth_before_marriage(fname) == True):
+        print("US 02: All marriages occured after those married were born")
 
-    #khushi user story 18
-    if(sibs_nomarry(fname) == True):
-        print("Correct US18: No siblings are married to each other")
+    #user story 03
+    if(birth_before_death(fname) == True):
+        print("US03: All individuals have a birthday before their death")
 
-    #user story 23
-    if(unique_name_id(fname) == True):
-        print("Correct US23: All individuals have unique name and birthday combinations.")
-
-    #user story 25
-    if(unique_firstnames_in_fam(fname) == True):
-        print("Correct US25: All siblings have unique name and birthday combinations.")
-
-    if(list_deceased(fname) == True):
-        print("US 29: No deceased in this family tree.")
-
-    #user story 14
+    #user story 19
     if(first_cousins_nomarry(fname) == True):
         print("US19: No marriages are between first cousins.")
+
+    #user story 14
+    if(multiple_births(fname) == True):
+        print("US14: No more than 5 kids born at once.")
     
+    # f.close()
     return 
+
 
 if __name__ == "__main__":
     main()
