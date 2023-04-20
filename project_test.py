@@ -101,3 +101,11 @@ class TestUS15(unittest.TestCase):
 class TestUS21(unittest.TestCase):
     def test_genderroles(self):
         self.assertEqual(genderroles('test_file.ged'), True) 
+
+class TestUS14(unittest.TestCase):
+    def test_multiple_births(self):
+        self.assertEqual(multiple_births('test_file.ged'), True) 
+
+class TestUS19(unittest.TestCase):
+    def test_first_cousins_nomarry(self):
+        self.assertEqual(first_cousins_nomarry('test_file.ged'), True) 
