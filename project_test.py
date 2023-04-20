@@ -58,3 +58,11 @@ class TestUS07(unittest.TestCase):
 class TestUS17(unittest.TestCase):
     def test_no_marry_desc(self):
         self.assertEqual(no_marry_desc('US17_failtest_file.ged'), False) 
+
+class TestUS14(unittest.TestCase):
+    def test_multiple_births(self):
+        self.assertEqual(multiple_births('test_file.ged'), True)
+
+class TestUS19(unittest.TestCase):
+    def test_first_cousins_nomarry(self):
+        self.assertEqual(first_cousins_nomarry('test_file.ged'), True) 
