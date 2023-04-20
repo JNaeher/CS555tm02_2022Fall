@@ -463,6 +463,54 @@ def no_marry_desc(filename):
                 print("Error US17: Individual " + "(" + hid + ") married a descendant.")
     return valid
     
+# user story 14
+def multiple_births(filename):
+    valid = True
+    data = organize(filename)
+    families = data[1]
+    individuals = data[0]
+    for family in families:
+        children = family['children']
+        birthday_list = []
+        for child in children:
+            for check in individuals:
+                if(child == check['ID']):
+                    birthday = check['birthday']
+            if(birthday_list.count(birthday) == 5):
+                valid = False
+                print("Error US14: More than 5 siblings are born at once.")
+                return valid
+            else:
+                birthday_list.append(birthday)
+    return valid
+
+# user story 19
+def first_cousins_nomarry(filename):
+    valid = True
+    data = organize(filename)
+    families = data[1]
+    for family in families:
+        wid = family['wid']
+        hid = family['hid']
+        aunts_uncles = []
+        first_cousins = []
+        for family2 in families:
+            children = family2['children']
+            if (children.count(wid) != 0 or children.count(hid) != 0):
+                aunts_uncles.append(children)
+        for family3 in families:
+            if (aunts_uncles.count(family3['wid']) != 0 or aunts_uncles.count(family3['hid']) != 0):
+                first_cousins.append(family3['children'])
+        if(first_cousins.count(wid) == 0 and first_cousins.count(hid) != 0):
+            valid = False
+            print("Error US19: First cousins are married.")
+            return valid
+        if(first_cousins.count(wid) != 0 and first_cousins.count(hid) == 0):
+            valid = False
+            print("Error US19: First cousins are married.")
+            return valid
+    return valid
+        
 # user story 42: reject illegitimate dates
 def date_helper(day, month):
     day = int(day)
@@ -832,6 +880,40 @@ def main():
     else:
         print("\nNo Recent Deaths in the last 30 days:")
     
+
+    #user story 31
+    single_and_over_30_data = single_and_over_30(data)
+    if(len(single_and_over_30_data) > 0):
+        print("\nFamily Members who are over 30 and haven't been married: ")
+        printIndividuals(single_and_over_30_data, families)
+    else:
+        print("\nNo Family Members who are over 30 and haven't been married:")
+
+    #user story 34
+    double_marriage_age = large_age_marriage_difference(data)
+    if(len(double_marriage_age) > 0):
+        print("\nMarriages in which one couple is twice the age of the other: ")
+        printFamilies(individuals, single_and_over_30_data)
+    else:
+        print("\nNo Marriages in which one couple is twice the age of the other: ")
+
+    
+    #user story 31
+    single_and_over_30_data = single_and_over_30(data)
+    if(len(single_and_over_30_data) > 0):
+        print("\nFamily Members who are over 30 and haven't been married: ")
+        printIndividuals(single_and_over_30_data, families)
+    else:
+        print("\nNo Family Members who are over 30 and haven't been married:")
+
+    #user story 34
+    double_marriage_age = large_age_marriage_difference(data)
+    if(len(double_marriage_age) > 0):
+        print("\nMarriages in which one couple is twice the age of the other: ")
+        printFamilies(individuals, single_and_over_30_data)
+    else:
+        print("\nNo Marriages in which one couple is twice the age of the other: ")
+
     #does the checking from the user stories
 
     #user story 07
@@ -900,9 +982,10 @@ def main():
     if(list_deceased(fname) == True):
         print("US 29: No deceased in this family tree.")
 
-    if(dates_after_current(fname) == True):
-        print("US 01: All dates are before current date")
-
+    #user story 14
+    if(first_cousins_nomarry(fname) == True):
+        print("US19: No marriages are between first cousins.")
+    
     return 
 
 if __name__ == "__main__":
